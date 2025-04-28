@@ -25,7 +25,7 @@ namespace DashboardApi.Mail
         {
             //// Configurar la información de la cuenta de Gmail
             string correoRemitente = "gilberto.r@operamx.com";
-            string contraseña = "GRC1931519315";
+            string contraseña = "yrhb lxno riph bdtc";
 
             //// Configurar la información de la cuenta de Gmail
             //string correoRemitente = "it_token@operamx.com";

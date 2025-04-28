@@ -3624,11 +3624,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\repositorios git\\DashboardApi\\DashboardApi.csproj",
+      "projectUniqueName": "D:\\repositorios git\\API-SCORECARD\\DashboardApi.csproj",
       "projectName": "DashboardApi",
-      "projectPath": "D:\\repositorios git\\DashboardApi\\DashboardApi.csproj",
+      "projectPath": "D:\\repositorios git\\API-SCORECARD\\DashboardApi.csproj",
       "packagesPath": "C:\\Users\\devel\\.nuget\\packages\\",
-      "outputPath": "D:\\repositorios git\\DashboardApi\\obj\\",
+      "outputPath": "D:\\repositorios git\\API-SCORECARD\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\devel\\AppData\\Roaming\\NuGet\\NuGet.Config",

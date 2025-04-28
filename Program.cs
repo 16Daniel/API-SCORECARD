@@ -1,4 +1,4 @@
-using DashboardApi;
+using DashboardApi.Funciones;
 using DashboardApi.Mail;
 using DashboardApi.ModelsBD1;
 using DashboardApi.ModelsBD2;
@@ -22,7 +22,11 @@ var connectionStringBD2 = builder.Configuration.GetConnectionString("DB2");
 builder.Services.AddDbContext<DBRebelContext>(options => options.UseSqlServer(connectionString))
     .AddDbContext<BD1Context>(options => options.UseSqlServer(connectionStringBD1))
     .AddDbContext<DashboardContext>(options => options.UseSqlServer(defaultconnectionString))
-    .AddDbContext<BD2Context>(options => options.UseSqlServer(connectionStringBD2));
+    .AddDbContext<BD2Context>(options =>
+    options.UseSqlServer(connectionStringBD2, sqlOptions =>
+    {
+        sqlOptions.CommandTimeout(3600); // timeout en segundos
+    }));
 
 builder.Services.AddCors(policyBuilder =>
     policyBuilder.AddDefaultPolicy(policy =>
@@ -32,6 +36,8 @@ builder.Services.AddCors(policyBuilder =>
 
 builder.Services.AddScoped<MailC>();
 builder.Services.AddScoped<Funciones>();
+builder.Services.AddScoped<FuncionesBonos>();
+
 
 //// Configurar Quartz
 //builder.Services.AddQuartz(q =>

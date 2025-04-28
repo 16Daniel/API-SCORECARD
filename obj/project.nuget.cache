@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "lWu2ogmsioDkIO9FOqE+a5Cz2F0FWF1p5TdNTgTKMbKQzp5cEJuw/zx/x4AxkpmNzCF2Byn8KYSxkfZJIZEswg==",
+  "dgSpecHash": "qQPQS44dNa7il/OGV+B/nIm0PhjQGR8EHvq3yANRH4XLEFCg8oDamICf0tc5dGeWCl4xsfNOGpfKR10ETSPyiA==",
   "success": true,
-  "projectFilePath": "D:\\repositorios git\\DashboardApi\\DashboardApi.csproj",
+  "projectFilePath": "D:\\repositorios git\\API-SCORECARD\\DashboardApi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\devel\\.nuget\\packages\\epplus\\7.2.2\\epplus.7.2.2.nupkg.sha512",
     "C:\\Users\\devel\\.nuget\\packages\\epplus.interfaces\\6.1.1\\epplus.interfaces.6.1.1.nupkg.sha512",
