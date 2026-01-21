@@ -367,9 +367,9 @@ namespace DashboardApi.Funciones
             {
                 var sucursal = _db2Context.RemFronts.Where(x => x.Idfront == ids).FirstOrDefault();
 
-                double mermasala = (double)_dbRebelContext.ItMermas.Where(x => x.Codarticulo == 158 && x.Fecha.Value.Date >= fechaini.Date && x.Fecha <= fechafin.Date && x.Justificacion == "MERMA OPERATIVA" && x.Sucursal == sucursal.Titulo).Sum(x => x.Unidades);
-                double mermasBoneless = (double)_dbRebelContext.ItMermas.Where(x => x.Codarticulo == 10183 && x.Fecha.Value.Date >= fechaini.Date && x.Fecha <= fechafin.Date && x.Justificacion == "MERMA OPERATIVA" && x.Sucursal == sucursal.Titulo).Sum(x => x.Unidades);
-                double mermaspapa = (double)_dbRebelContext.ItMermas.Where(x => x.Codarticulo == 10193 && x.Fecha.Value.Date >= fechaini.Date && x.Fecha <= fechafin.Date && x.Justificacion == "MERMA OPERATIVA" && x.Sucursal == sucursal.Titulo).Sum(x => x.Unidades);
+                double mermasala = (double)_dbRebelContext.ItMermas.Where(x => x.Codarticulo == 158 && x.Fecha.Value.Date >= fechaini.Date && x.Fecha.Value.Date <= fechafin.Date && x.Justificacion == "MERMA OPERATIVA" && x.Sucursal == sucursal.Titulo).Sum(x => x.Unidades);
+                double mermasBoneless = (double)_dbRebelContext.ItMermas.Where(x => x.Codarticulo == 10183 && x.Fecha.Value.Date >= fechaini.Date && x.Fecha.Value.Date <= fechafin.Date && x.Justificacion == "MERMA OPERATIVA" && x.Sucursal == sucursal.Titulo).Sum(x => x.Unidades);
+                double mermaspapa = (double)_dbRebelContext.ItMermas.Where(x => x.Codarticulo == 10193 && x.Fecha.Value.Date >= fechaini.Date && x.Fecha.Value.Date <= fechafin.Date && x.Justificacion == "MERMA OPERATIVA" && x.Sucursal == sucursal.Titulo).Sum(x => x.Unidades);
 
                 // compras del articulo en el periodo 
                 double comprasAla = getComprasArticulo(ids, 158, fechaini, fechafin);

@@ -23,6 +23,7 @@ namespace DashboardApi.ModelsDashboard
         public virtual DbSet<Diferencia> Diferencias { get; set; } = null!;
         public virtual DbSet<GruposSucursal> GruposSucursals { get; set; } = null!;
         public virtual DbSet<JobsEjecutado> JobsEjecutados { get; set; } = null!;
+        public virtual DbSet<MetasSalon> MetasSalons { get; set; } = null!;
         public virtual DbSet<Parametro> Parametros { get; set; } = null!;
         public virtual DbSet<ReportesBono> ReportesBonos { get; set; } = null!;
         public virtual DbSet<Usuario> Usuarios { get; set; } = null!;
@@ -152,6 +153,23 @@ namespace DashboardApi.ModelsDashboard
                     .HasColumnName("FECHA");
 
                 entity.Property(e => e.IdJob).HasColumnName("ID_JOB");
+            });
+
+            modelBuilder.Entity<MetasSalon>(entity =>
+            {
+                entity.ToTable("METAS_SALON");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Año).HasColumnName("AÑO");
+
+                entity.Property(e => e.Mes).HasColumnName("MES");
+
+                entity.Property(e => e.Meta).HasColumnName("META");
+
+                entity.Property(e => e.Sucursal)
+                    .HasMaxLength(50)
+                    .HasColumnName("SUCURSAL");
             });
 
             modelBuilder.Entity<Parametro>(entity =>

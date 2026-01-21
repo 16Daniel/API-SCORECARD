@@ -1,5 +1,6 @@
 ﻿using DashboardApi.ModelsBD1;
 using DashboardApi.ModelsBD2;
+using DashboardApi.ModelsDashboard;
 using DashboardApi.ModelsDBRebel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,13 +15,15 @@ namespace DashboardApi.Controllers
     {
         BD1Context _db1Context; 
         BD2Context _db2Context;
-        DBRebelContext _dbRebelContext; 
+        DBRebelContext _dbRebelContext;
+        DashboardContext _dashboardContext; 
 
-        public MetasController(BD1Context d1Context,BD2Context bD2Context, DBRebelContext dBRebelContext) 
+        public MetasController(BD1Context d1Context,BD2Context bD2Context, DBRebelContext dBRebelContext, DashboardContext dashboardContext) 
         {
             _db1Context = d1Context;
             _db2Context = bD2Context;
             _dbRebelContext = dBRebelContext;
+            _dashboardContext = dashboardContext; 
         }
 
         [HttpPost("upload")]
@@ -53,9 +56,10 @@ namespace DashboardApi.Controllers
                                 Anio = worksheet.Cells[row, 4].Text,
                                 Dias =worksheet.Cells[row, 5].Text,
                                 Meta = worksheet.Cells[row, 6].Text,
-                                Rotacion = worksheet.Cells[row, 7].Text,
-                                Porcentaje = worksheet.Cells[row, 8].Text,
-                                Grupo = worksheet.Cells[row, 9].Text
+                                MetaSalon = worksheet.Cells[row, 7].Text,
+                                Rotacion = worksheet.Cells[row, 8].Text,
+                                Porcentaje = worksheet.Cells[row, 9].Text,
+                                Grupo = worksheet.Cells[row, 10].Text
                             };
 
                             sucursales.Add(sucursal);
@@ -87,37 +91,53 @@ namespace DashboardApi.Controllers
                         var reg = _db2Context.SerieAns.Where(x => x.SerieAn1.Equals(item.serie) && x.Año == anio && x.Mes == mes && x.Grupo == item.grupo).FirstOrDefault();
                         if (reg == null)
                         {
-                            _db2Context.SerieAns.Add(new ModelsBD2.SerieAn()
-                            {
-                                SerieAn1 = item.serie,
-                                Mes = mes,
-                                Año = anio,
-                                Dias = (decimal?)double.Parse(item.dias),
-                                PresupuestoVta = (decimal?)double.Parse(item.meta),
-                                PresupuestoRotacion = (decimal?)double.Parse(item.rotacion),
-                                Porcentaje = (decimal?)double.Parse(item.porcentaje),
-                                Grupo = item.grupo,
-                            });
+                            //_db2Context.SerieAns.Add(new ModelsBD2.SerieAn()
+                            //{
+                            //    SerieAn1 = item.serie,
+                            //    Mes = mes,
+                            //    Año = anio,
+                            //    Dias = (decimal?)double.Parse(item.dias),
+                            //    PresupuestoVta = (decimal?)double.Parse(item.meta),
+                            //    PresupuestoRotacion = (decimal?)double.Parse(item.rotacion),
+                            //    Porcentaje = (decimal?)double.Parse(item.porcentaje),
+                            //    Grupo = item.grupo,
+                            //});
                         }
                     }
 
                     if (item.grupo.Trim().Equals("GAD"))
                     {
-                        _db1Context.SerieAns.Add(new ModelsBD1.SerieAn()
+                        //_db1Context.SerieAns.Add(new ModelsBD1.SerieAn()
+                        //{
+                        //    SerieAn1 = item.serie,
+                        //    Mes = mes,
+                        //    Año = anio,
+                        //    Dias = (decimal?)double.Parse(item.dias),
+                        //    PresupuestoVta = (decimal?)double.Parse(item.meta),
+                        //    PresupuestoRotacion = (decimal?)double.Parse(item.rotacion),
+                        //    Porcentaje = (decimal?)double.Parse(item.porcentaje),
+                        //    Grupo = item.grupo,
+                        //});
+                    }
+
+                    if (item.grupo == "WA") 
+                    {
+                        var regMetaSalon = _dashboardContext.MetasSalons.Where(x => x.Año == anio && x.Mes == mes && x.Sucursal == item.serie).FirstOrDefault();
+                        if (regMetaSalon == null)
                         {
-                            SerieAn1 = item.serie,
-                            Mes = mes,
-                            Año = anio,
-                            Dias = (decimal?)double.Parse(item.dias),
-                            PresupuestoVta = (decimal?)double.Parse(item.meta),
-                            PresupuestoRotacion = (decimal?)double.Parse(item.rotacion),
-                            Porcentaje = (decimal?)double.Parse(item.porcentaje),
-                            Grupo = item.grupo,
-                        });
+                            _dashboardContext.MetasSalons.Add(new MetasSalon()
+                            {
+                                Año = anio,
+                                Mes = mes,
+                                Meta = double.Parse(item.metaSalon),
+                                Sucursal = item.serie
+                            });
+                        }
                     }
                 }
-                await _db2Context.SaveChangesAsync();
-                await _db1Context.SaveChangesAsync();
+                //await _db2Context.SaveChangesAsync();
+                //await _db1Context.SaveChangesAsync();
+                await _dashboardContext.SaveChangesAsync(); 
                 return Ok();
             }
             catch (Exception ex)
@@ -163,10 +183,11 @@ namespace DashboardApi.Controllers
                     worksheet.Cells[1, 3].Value = "MES";
                     worksheet.Cells[1, 4].Value = "AÑO";
                     worksheet.Cells[1, 5].Value = "DÍAS";
-                    worksheet.Cells[1, 6].Value = "META";
-                    worksheet.Cells[1, 7].Value = "ROTACIÓN";
-                    worksheet.Cells[1, 8].Value = "PORCENTAJE";
-                    worksheet.Cells[1, 9].Value = "GRUPO";
+                    worksheet.Cells[1, 6].Value = "META GENERAL";
+                    worksheet.Cells[1, 7].Value = "META SALÓN";
+                    worksheet.Cells[1, 8].Value = "ROTACIÓN";
+                    worksheet.Cells[1, 9].Value = "PORCENTAJE";
+                    worksheet.Cells[1, 10].Value = "GRUPO";
 
                     for (int i = 0; i < SUCURSALESMX.Count; i++) 
                     {
@@ -177,8 +198,9 @@ namespace DashboardApi.Controllers
                         worksheet.Cells[i + 2, 5].Value = daysInMonth;
                         worksheet.Cells[i + 2, 6].Value = "";
                         worksheet.Cells[i + 2, 7].Value = "";
-                        worksheet.Cells[i + 2, 8].Value = 3.5;
-                        worksheet.Cells[i + 2, 9].Value = "WA";
+                        worksheet.Cells[i + 2, 8].Value = "";
+                        worksheet.Cells[i + 2, 9].Value = 3.5;
+                        worksheet.Cells[i + 2, 10].Value = "WA";
 
                     }
 
@@ -189,12 +211,13 @@ namespace DashboardApi.Controllers
                     worksheet.Cells[SUCURSALESMX.Count + 2, 5].Value = daysInMonth;
                     worksheet.Cells[SUCURSALESMX.Count + 2, 6].Value = "";
                     worksheet.Cells[SUCURSALESMX.Count + 2, 7].Value = "";
-                    worksheet.Cells[SUCURSALESMX.Count + 2, 8].Value = 3.5;
-                    worksheet.Cells[SUCURSALESMX.Count + 2, 9].Value = "GAD";
+                    worksheet.Cells[SUCURSALESMX.Count + 2, 8].Value = "";
+                    worksheet.Cells[SUCURSALESMX.Count + 2, 9].Value = 3.5;
+                    worksheet.Cells[SUCURSALESMX.Count + 2, 10].Value = "GAD";
 
 
                     // Aplicar formato a los encabezados (opcional)
-                    using (var range = worksheet.Cells["A1:I1"])
+                    using (var range = worksheet.Cells["A1:J1"])
                     {
                         range.Style.Font.Bold = true;
                         range.Style.Fill.PatternType = ExcelFillStyle.Solid;
@@ -233,6 +256,7 @@ namespace DashboardApi.Controllers
         public string Anio { get; set; }
         public string Dias { get; set; }
         public string Meta { get; set; }
+        public string MetaSalon { get; set; }
         public string Rotacion { get; set; }
         public string Porcentaje { get; set; }
         public string Grupo { get; set; }
@@ -245,6 +269,7 @@ namespace DashboardApi.Controllers
         public string grupo { get; set; }
         public string mes { get; set; }
         public string meta { get; set; }
+        public string metaSalon { get; set; }
         public string nombre { get; set; }
         public string porcentaje { get; set; }
         public string rotacion { get; set; }

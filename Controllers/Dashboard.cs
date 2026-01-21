@@ -47,8 +47,9 @@ namespace DashboardApi.Controllers
 
         [HttpPost]
     [Route("ConsultaDashboard")]
-    public async Task<ActionResult> consultadash([FromForm] string jdsucursales, [FromForm] string fecha)
+    public async Task<ActionResult> consultadash([FromForm] string jdsucursales, [FromForm] string fecha,[FromForm] Boolean metaSalon)
     {
+           
       try
       {
         List<SucursalModel> arrsucursales = System.Text.Json.JsonSerializer.Deserialize<List<SucursalModel>>(jdsucursales);
@@ -74,10 +75,17 @@ namespace DashboardApi.Controllers
           {
             var meta = _db2Context.SerieAns.Where(x => x.SerieAn1 == cajafront.Codalmventas && x.Año == year && x.Mes == month).FirstOrDefault();
             if (meta != null) { ventaSuc.meta = (double)meta.PresupuestoVta; } else { sinmeta = true; }
-          }
 
+            if(metaSalon == true) 
+            {
+                var metas = _dashboardContext.MetasSalons.Where(x=> x.Año == year && x.Mes == month && x.Sucursal == cajafront.Codalmventas).FirstOrDefault();
+                if (metas != null) { ventaSuc.meta = metas.Meta; } else { ventaSuc.meta = -1; }
+                        }
+          }
           double sumaTotalNeto = (double)_db2Context.Albventacabs.Where(x => x.Fo == itemsuc.cod && x.Fecha.Value.Month == month && x.Fecha.Value.Year == year && x.Fecha.Value.Date < DateTime.Now.Date).Sum(x => x.Totalneto);
+          double sumaTotalSalon = (double)_db2Context.Albventacabs.Where(x => x.Fo == itemsuc.cod && x.Fecha.Value.Month == month && x.Fecha.Value.Year == year && x.Fecha.Value.Date < DateTime.Now.Date && x.Codcliente == 0).Sum(x => x.Totalneto);
           ventaSuc.ventaTotal = sumaTotalNeto;
+                    if (metaSalon) { ventaSuc.ventaTotal = sumaTotalSalon; sumaTotalNeto = sumaTotalSalon;  }
           ventaSuc.cumplimiento = (sumaTotalNeto / ventaSuc.meta) * 100;
           if (sinmeta)
           {
@@ -129,7 +137,7 @@ namespace DashboardApi.Controllers
 
     [HttpPost]
     [Route("ConsultaDashboardMeses")]
-    public async Task<ActionResult> consultadashMeses([FromForm] string jdsucursales, [FromForm] string fechas)
+    public async Task<ActionResult> consultadashMeses([FromForm] string jdsucursales, [FromForm] string fechas, [FromForm] Boolean metaSalon)
     {
       try
       {
@@ -158,9 +166,19 @@ namespace DashboardApi.Controllers
               if (meta != null) { ventaSuc.meta = (double)meta.PresupuestoVta; } else { sinmeta = true; }
             }
 
+                        if (metaSalon == true)
+                        {
+                            var metas = _dashboardContext.MetasSalons.Where(x => x.Año == year && x.Mes == month && x.Sucursal == cajafront.Codalmventas).FirstOrDefault();
+                            if (metas != null) { ventaSuc.meta = metas.Meta; } else { ventaSuc.meta = -1;  }
+                        }
+
             double sumaTotalNeto = (double)_db2Context.Albventacabs.Where(x => x.Fo == itemsuc.cod && x.Fecha.Value.Month == month && x.Fecha.Value.Year == year).Sum(x => x.Totalneto);
-            ventaSuc.ventaTotal = sumaTotalNeto;
-            ventaSuc.cumplimiento = (sumaTotalNeto / ventaSuc.meta) * 100;
+            double sumaTotalSalon = (double)_db2Context.Albventacabs.Where(x => x.Fo == itemsuc.cod && x.Fecha.Value.Month == month && x.Fecha.Value.Year == year && x.Codcliente == 0).Sum(x => x.Totalneto);
+
+                        ventaSuc.ventaTotal = sumaTotalNeto;
+                        if (metaSalon) { ventaSuc.ventaTotal = sumaTotalSalon; sumaTotalNeto = sumaTotalSalon;  }
+
+                        ventaSuc.cumplimiento = (sumaTotalNeto / ventaSuc.meta) * 100;
             if (sinmeta)
             {
               ventaSuc.cumplimiento = 0;
@@ -1362,11 +1380,11 @@ namespace DashboardApi.Controllers
             cBoneless = compraboneless
           });
 
-          var mermasao = _dbRebelContext.ItMermas.Where(x => x.Codarticulo == 158 && x.Fecha.Value.Date >= fechainim.Date && x.Fecha <= fechafinm.Date && x.Justificacion == "MERMA OPERATIVA" && x.Sucursal == sucursal.Titulo).Sum(x => x.Unidades);
-          var mermasap = _dbRebelContext.ItMermas.Where(x => x.Codarticulo == 158 && x.Fecha.Value.Date >= fechainim.Date && x.Fecha <= fechafinm.Date && x.Justificacion == "MERMA PROVEEDOR" && x.Sucursal == sucursal.Titulo).Sum(x => x.Unidades);
+          var mermasao = _dbRebelContext.ItMermas.Where(x => x.Codarticulo == 158 && x.Fecha.Value.Date >= fechainim.Date && x.Fecha.Value.Date <= fechafinm.Date && x.Justificacion == "MERMA OPERATIVA" && x.Sucursal == sucursal.Titulo).Sum(x => x.Unidades);
+          var mermasap = _dbRebelContext.ItMermas.Where(x => x.Codarticulo == 158 && x.Fecha.Value.Date >= fechainim.Date && x.Fecha.Value.Date <= fechafinm.Date && x.Justificacion == "MERMA PROVEEDOR" && x.Sucursal == sucursal.Titulo).Sum(x => x.Unidades);
 
-          var mermasbo = _dbRebelContext.ItMermas.Where(x => x.Codarticulo == 10183 && x.Fecha.Value.Date >= fechainim.Date && x.Fecha <= fechafinm.Date && x.Justificacion == "MERMA OPERATIVA" && x.Sucursal == sucursal.Titulo).Sum(x => x.Unidades);
-          var mermasbp = _dbRebelContext.ItMermas.Where(x => x.Codarticulo == 10183 && x.Fecha.Value.Date >= fechainim.Date && x.Fecha <= fechafinm.Date && x.Justificacion == "MERMA PROVEEDOR" && x.Sucursal == sucursal.Titulo).Sum(x => x.Unidades);
+          var mermasbo = _dbRebelContext.ItMermas.Where(x => x.Codarticulo == 10183 && x.Fecha.Value.Date >= fechainim.Date && x.Fecha.Value.Date <= fechafinm.Date && x.Justificacion == "MERMA OPERATIVA" && x.Sucursal == sucursal.Titulo).Sum(x => x.Unidades);
+          var mermasbp = _dbRebelContext.ItMermas.Where(x => x.Codarticulo == 10183 && x.Fecha.Value.Date >= fechainim.Date && x.Fecha.Value.Date <= fechafinm.Date && x.Justificacion == "MERMA PROVEEDOR" && x.Sucursal == sucursal.Titulo).Sum(x => x.Unidades);
 
           mermasdata.Add(new MermasDS()
           {
@@ -1678,7 +1696,7 @@ namespace DashboardApi.Controllers
           }
 
           List<Object> dataayc = new List<Object>();
-          fechainim = ultimoDomingo.AddDays(-6);
+          fechainim = ultimoDomingo.AddDays(-13);
           fechafinm = ultimoDomingo;
           for (int i = 0; i < 8; i++)
           {
@@ -1747,11 +1765,11 @@ namespace DashboardApi.Controllers
               cBoneless = compraboneless
             });
 
-            var mermasao = _dbRebelContext.ItMermas.Where(x => x.Codarticulo == 158 && x.Fecha.Value.Date >= fechainim.Date && x.Fecha <= fechafinm.Date && x.Justificacion == "MERMA OPERATIVA" && x.Sucursal == sucursal.Titulo).Sum(x => x.Unidades);
-            var mermasap = _dbRebelContext.ItMermas.Where(x => x.Codarticulo == 158 && x.Fecha.Value.Date >= fechainim.Date && x.Fecha <= fechafinm.Date && x.Justificacion == "MERMA PROVEEDOR" && x.Sucursal == sucursal.Titulo).Sum(x => x.Unidades);
+            var mermasao = _dbRebelContext.ItMermas.Where(x => x.Codarticulo == 158 && x.Fecha.Value.Date >= fechainim.Date && x.Fecha.Value.Date <= fechafinm.Date && x.Justificacion == "MERMA OPERATIVA" && x.Sucursal == sucursal.Titulo).Sum(x => x.Unidades);
+            var mermasap = _dbRebelContext.ItMermas.Where(x => x.Codarticulo == 158 && x.Fecha.Value.Date >= fechainim.Date && x.Fecha.Value.Date <= fechafinm.Date && x.Justificacion == "MERMA PROVEEDOR" && x.Sucursal == sucursal.Titulo).Sum(x => x.Unidades);
 
-            var mermasbo = _dbRebelContext.ItMermas.Where(x => x.Codarticulo == 10183 && x.Fecha.Value.Date >= fechainim.Date && x.Fecha <= fechafinm.Date && x.Justificacion == "MERMA OPERATIVA" && x.Sucursal == sucursal.Titulo).Sum(x => x.Unidades);
-            var mermasbp = _dbRebelContext.ItMermas.Where(x => x.Codarticulo == 10183 && x.Fecha.Value.Date >= fechainim.Date && x.Fecha <= fechafinm.Date && x.Justificacion == "MERMA PROVEEDOR" && x.Sucursal == sucursal.Titulo).Sum(x => x.Unidades);
+            var mermasbo = _dbRebelContext.ItMermas.Where(x => x.Codarticulo == 10183 && x.Fecha.Value.Date >= fechainim.Date && x.Fecha.Value.Date <= fechafinm.Date && x.Justificacion == "MERMA OPERATIVA" && x.Sucursal == sucursal.Titulo).Sum(x => x.Unidades);
+            var mermasbp = _dbRebelContext.ItMermas.Where(x => x.Codarticulo == 10183 && x.Fecha.Value.Date >= fechainim.Date && x.Fecha.Value.Date <= fechafinm.Date && x.Justificacion == "MERMA PROVEEDOR" && x.Sucursal == sucursal.Titulo).Sum(x => x.Unidades);
 
             mermasdata.Add(new MermasDS()
             {
