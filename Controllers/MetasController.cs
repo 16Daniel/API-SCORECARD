@@ -91,33 +91,33 @@ namespace DashboardApi.Controllers
                         var reg = _db2Context.SerieAns.Where(x => x.SerieAn1.Equals(item.serie) && x.Año == anio && x.Mes == mes && x.Grupo == item.grupo).FirstOrDefault();
                         if (reg == null)
                         {
-                            //_db2Context.SerieAns.Add(new ModelsBD2.SerieAn()
-                            //{
-                            //    SerieAn1 = item.serie,
-                            //    Mes = mes,
-                            //    Año = anio,
-                            //    Dias = (decimal?)double.Parse(item.dias),
-                            //    PresupuestoVta = (decimal?)double.Parse(item.meta),
-                            //    PresupuestoRotacion = (decimal?)double.Parse(item.rotacion),
-                            //    Porcentaje = (decimal?)double.Parse(item.porcentaje),
-                            //    Grupo = item.grupo,
-                            //});
+                            _db2Context.SerieAns.Add(new ModelsBD2.SerieAn()
+                            {
+                                SerieAn1 = item.serie,
+                                Mes = mes,
+                                Año = anio,
+                                Dias = (decimal?)double.Parse(item.dias),
+                                PresupuestoVta = (decimal?)double.Parse(item.meta),
+                                PresupuestoRotacion = (decimal?)double.Parse(item.rotacion),
+                                Porcentaje = (decimal?)double.Parse(item.porcentaje),
+                                Grupo = item.grupo,
+                            });
                         }
                     }
 
                     if (item.grupo.Trim().Equals("GAD"))
                     {
-                        //_db1Context.SerieAns.Add(new ModelsBD1.SerieAn()
-                        //{
-                        //    SerieAn1 = item.serie,
-                        //    Mes = mes,
-                        //    Año = anio,
-                        //    Dias = (decimal?)double.Parse(item.dias),
-                        //    PresupuestoVta = (decimal?)double.Parse(item.meta),
-                        //    PresupuestoRotacion = (decimal?)double.Parse(item.rotacion),
-                        //    Porcentaje = (decimal?)double.Parse(item.porcentaje),
-                        //    Grupo = item.grupo,
-                        //});
+                        _db1Context.SerieAns.Add(new ModelsBD1.SerieAn()
+                        {
+                            SerieAn1 = item.serie,
+                            Mes = mes,
+                            Año = anio,
+                            Dias = (decimal?)double.Parse(item.dias),
+                            PresupuestoVta = (decimal?)double.Parse(item.meta),
+                            PresupuestoRotacion = (decimal?)double.Parse(item.rotacion),
+                            Porcentaje = (decimal?)double.Parse(item.porcentaje),
+                            Grupo = item.grupo,
+                        });
                     }
 
                     if (item.grupo == "WA") 
@@ -135,8 +135,8 @@ namespace DashboardApi.Controllers
                         }
                     }
                 }
-                //await _db2Context.SaveChangesAsync();
-                //await _db1Context.SaveChangesAsync();
+                await _db2Context.SaveChangesAsync();
+                await _db1Context.SaveChangesAsync();
                 await _dashboardContext.SaveChangesAsync(); 
                 return Ok();
             }
@@ -159,7 +159,7 @@ namespace DashboardApi.Controllers
 
                 var query = from rf in _db2Context.RemFronts
                             join rcf in _db2Context.RemCajasfronts on rf.Idfront equals rcf.Idfront
-                            where rf.Titulo.Trim().StartsWith("RW") && rcf.Cajafront == 1
+                            where rcf.Cajafront == 1 && rf.Descatalogado == false
                             select new
                             {
                                 rf.Titulo,

@@ -134,8 +134,109 @@ namespace DashboardApi.Controllers
       }
     }
 
+        [HttpPost]
+        [Route("ConsultaDashboardDoble")]
+        public async Task<ActionResult> consultadashDoble([FromForm] string jdsucursales, [FromForm] string fecha)
+        {
 
-    [HttpPost]
+            try
+            {
+                List<SucursalModel> arrsucursales = System.Text.Json.JsonSerializer.Deserialize<List<SucursalModel>>(jdsucursales);
+                string[] datos = fecha.Split('-');
+                int year = int.Parse(datos[0]);
+                int month = int.Parse(datos[1]);
+                int day = DateTime.Now.Date.Day;
+                if (day > 1)
+                {
+                    day--;
+                }
+                int daysInMonth = DateTime.DaysInMonth(year, month);
+                List<VentasDobleModel> ventassucursales = new List<VentasDobleModel>();
+                foreach (var itemsuc in arrsucursales)
+                {
+                    VentasDobleModel ventaSuc = new VentasDobleModel();
+                    ventaSuc.ids = itemsuc.cod;
+                    ventaSuc.nombreSucursal = itemsuc.name;
+                    ventaSuc.meta = -1;
+                    Boolean sinmeta = false;
+                    var cajafront = _db2Context.RemCajasfronts.Where(x => x.Idfront == itemsuc.cod).FirstOrDefault();
+                    if (cajafront != null)
+                    {
+                        var meta = _db2Context.SerieAns.Where(x => x.SerieAn1 == cajafront.Codalmventas && x.Año == year && x.Mes == month).FirstOrDefault();
+                        if (meta != null) { ventaSuc.meta = (double)meta.PresupuestoVta; } else { sinmeta = true; }
+
+                        var metas = _dashboardContext.MetasSalons.Where(x => x.Año == year && x.Mes == month && x.Sucursal == cajafront.Codalmventas).FirstOrDefault();
+                        if (metas != null) { ventaSuc.metaS = metas.Meta; } else { ventaSuc.metaS = -1; }
+                    }
+                    double sumaTotalNeto = (double)_db2Context.Albventacabs.Where(x => x.Fo == itemsuc.cod && x.Fecha.Value.Month == month && x.Fecha.Value.Year == year && x.Fecha.Value.Date < DateTime.Now.Date).Sum(x => x.Totalneto);
+                    double sumaTotalSalon = (double)_db2Context.Albventacabs.Where(x => x.Fo == itemsuc.cod && x.Fecha.Value.Month == month && x.Fecha.Value.Year == year && x.Fecha.Value.Date < DateTime.Now.Date && x.Codcliente == 0).Sum(x => x.Totalneto);
+                    ventaSuc.ventaTotal = sumaTotalNeto;
+
+                    ventaSuc.ventaTotalS = sumaTotalSalon;
+
+                    if (ventaSuc.metaS > -1)
+                    {
+                        ventaSuc.cumplimientoS = (sumaTotalSalon / ventaSuc.metaS) * 100;
+                    }
+                    else 
+                    {
+                        ventaSuc.cumplimientoS = 0; 
+                    }
+
+                    if (sinmeta)
+                    {
+                        ventaSuc.cumplimiento = 0;
+                    }
+                    else
+                    {
+                        ventaSuc.cumplimiento = (sumaTotalNeto / ventaSuc.meta) * 100;
+                    }
+                    ventaSuc.month = month;
+                    ventaSuc.year = year;
+                    double cumplimientoesp = 0.0;
+
+                    if (DateTime.Now.Date.Year == year && DateTime.Now.Date.Month == month)
+                    {
+                        cumplimientoesp = (double)100 / (double)daysInMonth;
+                        cumplimientoesp = cumplimientoesp * day;
+
+                        if (ventaSuc.meta == -1) { ventaSuc.proyeccion = 0; }
+                        else { ventaSuc.proyeccion = (ventaSuc.meta / (double)daysInMonth) * day; }
+
+                        if (ventaSuc.metaS == -1) { ventaSuc.proyeccionS = 0; }
+                        else { ventaSuc.proyeccionS = (ventaSuc.metaS / (double)daysInMonth) * day; }
+
+                    }
+                    else
+                    {
+                        if (ventaSuc.meta == -1) { ventaSuc.proyeccion = 0; }
+                        else { ventaSuc.proyeccion = ventaSuc.meta; }
+
+                        if (ventaSuc.metaS == -1) { ventaSuc.proyeccionS = 0; }
+                        else { ventaSuc.proyeccionS = ventaSuc.metaS; }
+
+                    }
+
+                    if ((DateTime.Now.Date.Year < year && DateTime.Now.Date.Month < month) || (DateTime.Now.Date.Year == year && DateTime.Now.Date.Month > month))
+                    {
+                        cumplimientoesp = 100;
+                    }
+
+
+                    ventaSuc.cumplimientoesperado = cumplimientoesp;
+                    ventassucursales.Add(ventaSuc);
+                }
+
+                return StatusCode(StatusCodes.Status200OK, ventassucursales);
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = ex.ToString() });
+            }
+        }
+
+        [HttpPost]
     [Route("ConsultaDashboardMeses")]
     public async Task<ActionResult> consultadashMeses([FromForm] string jdsucursales, [FromForm] string fechas, [FromForm] Boolean metaSalon)
     {
@@ -2567,7 +2668,25 @@ namespace DashboardApi.Controllers
 
   }
 
-  public class DetallesVentasModel
+    public class VentasDobleModel
+    {
+        public int ids { get; set; }
+        public string nombreSucursal { get; set; }
+        public double ventaTotal { get; set; }
+        public double ventaTotalS { get; set; }
+        public double meta { get; set; }
+        public double metaS { get; set; }
+        public double cumplimiento { get; set; }
+        public double cumplimientoS { get; set; }
+        public int month { get; set; }
+        public int year { get; set; }
+        public double cumplimientoesperado { get; set; }
+        public double proyeccion { get; set; }
+        public double proyeccionS { get; set; }
+
+    }
+
+    public class DetallesVentasModel
   {
     public int ids { get; set; }
     public double ventaTotal { get; set; }
