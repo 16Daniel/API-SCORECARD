@@ -48,6 +48,7 @@ namespace DashboardApi.Controllers
                     if (reporte == null)
                     {
                         VentasModel alcancedeventas = await _fxBonos.AlcanceDeVentas(ids, mes);
+                        VentasModel alcancedeventasSalon = await _fxBonos.AlcanceDeVentasSalon(ids, mes);
                         costoModel costossucursales = await _fxBonos.getCosto(alcancedeventas);
                         PorcentajeBebidaModel porcentajeBeidas = await _fxBonos.getPBebidas(ids, primerDia, ultimoDia);
                         inicioAYCModel iniciohdb = await _fxBonos.getInicioAYCHDB(ids, primerDia, ultimoDia);
@@ -58,6 +59,7 @@ namespace DashboardApi.Controllers
                         data.Add(new ReporteBono()
                         {
                             alcanceDeVentas = alcancedeventas,
+                            alcanceDeVentasSalon = alcancedeventasSalon,
                             costosSucursales = costossucursales,
                             pBebidas = porcentajeBeidas,
                             inicioayc = iniciohdb,
@@ -199,82 +201,99 @@ namespace DashboardApi.Controllers
                         worksheet.Cells[row, 4].Style.Fill.BackgroundColor.SetColor(_fxBonos.getBgColorAlcance(item.Alcance));
                         worksheet.Cells[row, 4].Style.Font.Color.SetColor(_fxBonos.esAmarillo(_fxBonos.getBgColorAlcance(item.Alcance)) ? System.Drawing.Color.Black: System.Drawing.Color.White);
 
-                        worksheet.Cells[row, 5].Value = item.Compras;
-                        worksheet.Cells[row, 6].Value = item.Costo;
-                        worksheet.Cells[row, 7].Value = item.VentaAlimentosSalon;
-                        worksheet.Cells[row, 8].Value = item.VentaBebidasSalon;
+                        worksheet.Cells[row, 5].Value = item.MetaSalon;
+                        worksheet.Cells[row, 6].Value = item.VentaSalon;
 
-                        worksheet.Cells[row, 9].Value = item.PorcentajeBebidas;
+                        worksheet.Cells[row, 7].Value = item.AlcanceSalon;
+                        worksheet.Cells[row, 7].Style.Font.Bold = true;
+                        worksheet.Cells[row, 7].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                        worksheet.Cells[row, 7].Style.Fill.BackgroundColor.SetColor(_fxBonos.getBgColorAlcance(item.Alcance));
+                        worksheet.Cells[row, 7].Style.Font.Color.SetColor(_fxBonos.esAmarillo(_fxBonos.getBgColorAlcance(item.Alcance)) ? System.Drawing.Color.Black : System.Drawing.Color.White);
+
+                        worksheet.Cells[row, 8].Value = item.Compras;
+
+                        worksheet.Cells[row, 9].Value = item.Costo;
                         worksheet.Cells[row, 9].Style.Font.Bold = true;
                         worksheet.Cells[row, 9].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                        worksheet.Cells[row, 9].Style.Fill.BackgroundColor.SetColor(item.PorcentajeBebidas>=2? System.Drawing.Color.Green : System.Drawing.Color.Red);
-                        worksheet.Cells[row, 9].Style.Font.Color.SetColor(System.Drawing.Color.White);
+                        worksheet.Cells[row, 9].Style.Fill.BackgroundColor.SetColor(_fxBonos.getBgColorCosto(item.Costo));
+                        worksheet.Cells[row, 9].Style.Font.Color.SetColor(_fxBonos.esAmarillo(_fxBonos.getBgColorCosto(item.Costo)) ? System.Drawing.Color.Black : System.Drawing.Color.White);
 
-                        worksheet.Cells[row, 10].Value = item.Totalayc;
-                        worksheet.Cells[row, 11].Value = item.Inicioaychdb;
 
-                        worksheet.Cells[row, 12].Value = item.Porcentajehdb;
-                        worksheet.Cells[row, 12].Style.Font.Bold = true;
-                        worksheet.Cells[row, 12].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                        worksheet.Cells[row, 12].Style.Fill.BackgroundColor.SetColor(item.Porcentajehdb > 25 ? System.Drawing.Color.Green : System.Drawing.Color.Red);
-                        worksheet.Cells[row, 12].Style.Font.Color.SetColor(System.Drawing.Color.White);
+                        worksheet.Cells[row, 10].Value = item.VentaAlimentosSalon;
+                        worksheet.Cells[row, 11].Value = item.VentaBebidasSalon;
+                        worksheet.Cells[row, 12].Value = item.VentaPostres;
 
-                        worksheet.Cells[row, 13].Value = item.DifAla;
-                        worksheet.Cells[row, 14].Value = item.ComprasAla;
+                        worksheet.Cells[row, 13].Value = item.PorcentajeBebidas;
+                        worksheet.Cells[row, 13].Style.Font.Bold = true;
+                        worksheet.Cells[row, 13].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                        worksheet.Cells[row, 13].Style.Fill.BackgroundColor.SetColor(item.PorcentajeBebidas>=2? System.Drawing.Color.Green : System.Drawing.Color.Red);
+                        worksheet.Cells[row, 13].Style.Font.Color.SetColor(System.Drawing.Color.White);
 
-                        worksheet.Cells[row, 15].Value = item.PdifAla;
-                        worksheet.Cells[row, 15].Style.Font.Bold = true;
-                        worksheet.Cells[row, 15].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                        worksheet.Cells[row, 15].Style.Fill.BackgroundColor.SetColor(_fxBonos.getBgColorDM(item.PdifAla));
-                        worksheet.Cells[row, 15].Style.Font.Color.SetColor(System.Drawing.Color.White);
+                        worksheet.Cells[row, 14].Value = item.Totalayc;
+                        worksheet.Cells[row, 15].Value = item.Inicioaychdb;
 
-                        worksheet.Cells[row, 16].Value = item.DifBoneless;
-                        worksheet.Cells[row, 17].Value = item.ComprasBoneless;
+                        worksheet.Cells[row, 16].Value = item.Porcentajehdb;
+                        worksheet.Cells[row, 16].Style.Font.Bold = true;
+                        worksheet.Cells[row, 16].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                        worksheet.Cells[row, 16].Style.Fill.BackgroundColor.SetColor(item.Porcentajehdb > 25 ? System.Drawing.Color.Green : System.Drawing.Color.Red);
+                        worksheet.Cells[row, 16].Style.Font.Color.SetColor(System.Drawing.Color.White);
 
-                        worksheet.Cells[row, 18].Value = item.PdifBoneless;
-                        worksheet.Cells[row, 18].Style.Font.Bold = true;
-                        worksheet.Cells[row, 18].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                        worksheet.Cells[row, 18].Style.Fill.BackgroundColor.SetColor(_fxBonos.getBgColorDM(item.PdifBoneless));
-                        worksheet.Cells[row, 18].Style.Font.Color.SetColor(System.Drawing.Color.White);
+                        worksheet.Cells[row, 17].Value = item.DifAla;
+                        worksheet.Cells[row, 18].Value = item.ComprasAla;
 
-                        worksheet.Cells[row, 19].Value = item.DifPapa;
-                        worksheet.Cells[row, 20].Value = item.ComprasPapa;
+                        worksheet.Cells[row, 19].Value = item.PdifAla;
+                        worksheet.Cells[row, 19].Style.Font.Bold = true;
+                        worksheet.Cells[row, 19].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                        worksheet.Cells[row, 19].Style.Fill.BackgroundColor.SetColor(_fxBonos.getBgColorDM(item.PdifAla));
+                        worksheet.Cells[row, 19].Style.Font.Color.SetColor(System.Drawing.Color.White);
 
-                        worksheet.Cells[row, 21].Value = item.PdifPapa;
-                        worksheet.Cells[row, 21].Style.Font.Bold = true;
-                        worksheet.Cells[row, 21].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                        worksheet.Cells[row, 21].Style.Fill.BackgroundColor.SetColor(_fxBonos.getBgColorDM(item.PdifPapa));
-                        worksheet.Cells[row, 21].Style.Font.Color.SetColor(System.Drawing.Color.White);
+                        worksheet.Cells[row, 20].Value = item.DifBoneless;
+                        worksheet.Cells[row, 21].Value = item.ComprasBoneless;
 
-                        worksheet.Cells[row, 22].Value = item.MermasAla;
+                        worksheet.Cells[row, 22].Value = item.PdifBoneless;
+                        worksheet.Cells[row, 22].Style.Font.Bold = true;
+                        worksheet.Cells[row, 22].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                        worksheet.Cells[row, 22].Style.Fill.BackgroundColor.SetColor(_fxBonos.getBgColorDM(item.PdifBoneless));
+                        worksheet.Cells[row, 22].Style.Font.Color.SetColor(System.Drawing.Color.White);
 
-                        worksheet.Cells[row, 23].Value = item.PmermasAla;
-                        worksheet.Cells[row, 23].Style.Font.Bold = true;
-                        worksheet.Cells[row, 23].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                        worksheet.Cells[row, 23].Style.Fill.BackgroundColor.SetColor(_fxBonos.getBgColorDM(item.PmermasAla));
-                        worksheet.Cells[row, 23].Style.Font.Color.SetColor(System.Drawing.Color.White);
+                        worksheet.Cells[row, 23].Value = item.DifPapa;
+                        worksheet.Cells[row, 24].Value = item.ComprasPapa;
 
-                        worksheet.Cells[row, 24].Value = item.MermasBoneless;
-
-                        worksheet.Cells[row, 25].Value = item.PmermasBoneless;
+                        worksheet.Cells[row, 25].Value = item.PdifPapa;
                         worksheet.Cells[row, 25].Style.Font.Bold = true;
                         worksheet.Cells[row, 25].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                        worksheet.Cells[row, 25].Style.Fill.BackgroundColor.SetColor(_fxBonos.getBgColorDM(item.PmermasBoneless));
+                        worksheet.Cells[row, 25].Style.Fill.BackgroundColor.SetColor(_fxBonos.getBgColorDM(item.PdifPapa));
                         worksheet.Cells[row, 25].Style.Font.Color.SetColor(System.Drawing.Color.White);
 
-                        worksheet.Cells[row, 26].Value = item.MermasPapa;
+                        worksheet.Cells[row, 26].Value = item.MermasAla;
 
-                        worksheet.Cells[row, 27].Value = item.PmermasPapa;
+                        worksheet.Cells[row, 27].Value = item.PmermasAla;
                         worksheet.Cells[row, 27].Style.Font.Bold = true;
                         worksheet.Cells[row, 27].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                        worksheet.Cells[row, 27].Style.Fill.BackgroundColor.SetColor(_fxBonos.getBgColorDM(item.PmermasPapa));
+                        worksheet.Cells[row, 27].Style.Fill.BackgroundColor.SetColor(_fxBonos.getBgColorDM(item.PmermasAla));
                         worksheet.Cells[row, 27].Style.Font.Color.SetColor(System.Drawing.Color.White);
 
-                        worksheet.Cells[row, 28].Value = item.PorcentajeTareas;
-                        worksheet.Cells[row, 28].Style.Font.Bold = true;
-                        worksheet.Cells[row, 28].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                        worksheet.Cells[row, 28].Style.Fill.BackgroundColor.SetColor(_fxBonos.getBgColorApps(item.PorcentajeTareas));
-                        worksheet.Cells[row, 28].Style.Font.Color.SetColor(_fxBonos.esAmarillo(_fxBonos.getBgColorApps(item.PorcentajeTareas)) ? System.Drawing.Color.Black : System.Drawing.Color.White);
+                        worksheet.Cells[row, 28].Value = item.MermasBoneless;
+
+                        worksheet.Cells[row, 29].Value = item.PmermasBoneless;
+                        worksheet.Cells[row, 29].Style.Font.Bold = true;
+                        worksheet.Cells[row, 29].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                        worksheet.Cells[row, 29].Style.Fill.BackgroundColor.SetColor(_fxBonos.getBgColorDM(item.PmermasBoneless));
+                        worksheet.Cells[row, 29].Style.Font.Color.SetColor(System.Drawing.Color.White);
+
+                        worksheet.Cells[row, 30].Value = item.MermasPapa;
+
+                        worksheet.Cells[row, 31].Value = item.PmermasPapa;
+                        worksheet.Cells[row, 31].Style.Font.Bold = true;
+                        worksheet.Cells[row, 31].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                        worksheet.Cells[row, 31].Style.Fill.BackgroundColor.SetColor(_fxBonos.getBgColorDM(item.PmermasPapa));
+                        worksheet.Cells[row, 31].Style.Font.Color.SetColor(System.Drawing.Color.White);
+
+                        worksheet.Cells[row, 32].Value = item.PorcentajeTareas;
+                        worksheet.Cells[row, 32].Style.Font.Bold = true;
+                        worksheet.Cells[row, 32].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                        worksheet.Cells[row, 32].Style.Fill.BackgroundColor.SetColor(_fxBonos.getBgColorApps(item.PorcentajeTareas));
+                        worksheet.Cells[row, 32].Style.Font.Color.SetColor(_fxBonos.esAmarillo(_fxBonos.getBgColorApps(item.PorcentajeTareas)) ? System.Drawing.Color.Black : System.Drawing.Color.White);
 
                         row++;
                     }
@@ -303,6 +322,7 @@ namespace DashboardApi.Controllers
     public class ReporteBono 
     {
         public VentasModel alcanceDeVentas { get; set; }
+        public VentasModel alcanceDeVentasSalon { get; set; }
         public costoModel costosSucursales { get; set; }
         public PorcentajeBebidaModel pBebidas { get; set; }
         public inicioAYCModel inicioayc {  get; set; }
@@ -317,10 +337,14 @@ namespace DashboardApi.Controllers
         public double MetaVenta { get; set; }
         public double VentaReal { get; set; }
         public double Alcance { get; set; }
+        public double MetaSalon { get; set; }
+        public double VentaSalon { get; set; }
+        public double AlcanceSalon { get; set; }
         public double Compras { get; set; }
         public double Costo { get; set; }
         public double VentaAlimentosSalon { get; set; }
         public double VentaBebidasSalon { get; set; }
+        public double VentaPostres { get; set; }
         public double PorcentajeBebidas { get; set; }
         public double Totalayc { get; set; }
         public double Inicioaychdb { get; set; }

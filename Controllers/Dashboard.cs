@@ -1231,7 +1231,7 @@ namespace DashboardApi.Controllers
                 {
                   idfront = ids,
                   nombresuc = sucdb.Titulo,
-                  bebidas = double.Parse(datosdt.Rows[0][2].ToString()),
+                  bebidas = double.Parse(datosdt.Rows[0][2].ToString()) + double.Parse(datosdt.Rows[0][3].ToString()),
                   alimentos = double.Parse(datosdt.Rows[0][1].ToString()),
                   semana = itemsem.semana,
                   fi = itemsem.inicio,

@@ -81,6 +81,48 @@ namespace DashboardApi.Funciones
             }
         }
 
+        public async Task<VentasModel> AlcanceDeVentasSalon(int itemsuc, string mes)
+        {
+            VentasModel ventaSuc = new VentasModel();
+            try
+            {
+                var sucursal = _db2Context.RemFronts.Where(x => x.Idfront == itemsuc).FirstOrDefault();
+                string[] datos = mes.Split('/');
+                int year = int.Parse(datos[1]);
+                int month = int.Parse(datos[0]);
+
+                ventaSuc.ids = sucursal.Idfront;
+                ventaSuc.nombreSucursal = sucursal.Titulo;
+                ventaSuc.meta = -1;
+                Boolean sinmeta = false;
+                var cajafront = _db2Context.RemCajasfronts.Where(x => x.Idfront == sucursal.Idfront).FirstOrDefault();
+                if (cajafront != null)
+                {
+                    var meta = _dashboardContext.MetasSalons.Where(x => x.Sucursal == cajafront.Codalmventas && x.Año == year && x.Mes == month).FirstOrDefault();
+                    if (meta != null) { ventaSuc.meta = (double)meta.Meta; } else { sinmeta = true; }
+                }
+
+                double sumaTotalNeto = (double)_db2Context.Albventacabs.Where(x => x.Fo == sucursal.Idfront && x.Fecha.Value.Month == month && x.Fecha.Value.Year == year && x.Codcliente == 0).Sum(x => x.Totalneto);
+                ventaSuc.ventaTotal = sumaTotalNeto;
+                ventaSuc.cumplimiento = (sumaTotalNeto / ventaSuc.meta) * 100;
+                if (sinmeta)
+                {
+                    ventaSuc.cumplimiento = 0;
+                }
+                else
+                {
+                    ventaSuc.cumplimiento = (sumaTotalNeto / ventaSuc.meta) * 100;
+                }
+                ventaSuc.month = month;
+                ventaSuc.year = year;
+
+                return ventaSuc;
+            }
+            catch (Exception ex)
+            {
+                return ventaSuc;
+            }
+        }
         public async Task<costoModel> getCosto(VentasModel data)
         {
             costoModel costosucursal = new costoModel();
@@ -155,10 +197,12 @@ namespace DashboardApi.Funciones
 
                         double ventaAlimentosSalon = double.Parse(datosdt.Rows[0][1].ToString());
                         double ventaBebidasSalon = double.Parse(datosdt.Rows[0][2].ToString());
+                        double ventaPostres = double.Parse(datosdt.Rows[0][3].ToString());
                         data.ventaAlimentosSalon = ventaAlimentosSalon;
                         data.ventaBebidasSalon = ventaBebidasSalon;
+                        data.ventaPostres = ventaPostres;
                         data.totalAYC = totalayc; 
-                        data.porcentaje = totalayc>0 ? (ventaBebidasSalon /(totalayc*55)) :0;
+                        data.porcentaje = totalayc>0 ? ((ventaBebidasSalon+ventaPostres) /(totalayc*55)) :0;
 
                     }
                 }
@@ -509,17 +553,33 @@ namespace DashboardApi.Funciones
         {
             System.Drawing.Color color = System.Drawing.Color.White;
 
-            if (porcentaje >=100)
+            if (porcentaje >=95)
             {
                 color = System.Drawing.Color.Green;
             }
 
-            if (porcentaje >=75 && porcentaje < 100)
+            if (porcentaje >=75 && porcentaje < 95)
             {
                 color = System.Drawing.Color.Yellow;
             }
 
             if (porcentaje < 75)
+            {
+                color = System.Drawing.Color.Red;
+            }
+
+            return color;
+        }
+
+        public System.Drawing.Color getBgColorCosto(double porcentaje)
+        {
+            System.Drawing.Color color = System.Drawing.Color.White;
+
+            if (porcentaje <= 43)
+            {
+                color = System.Drawing.Color.Green;
+            }
+            if (porcentaje > 43)
             {
                 color = System.Drawing.Color.Red;
             }
@@ -613,6 +673,7 @@ WHERE (ALM.NOTAS LIKE N'RW') AND (RCF.CAJAFRONT = 1)";
     {
         public double ventaAlimentosSalon { get; set; }
         public double ventaBebidasSalon { get; set; }   
+        public double ventaPostres { get; set; }
         public double porcentaje { get; set; }  
         public int totalAYC { get; set; }   
     }
