@@ -51,7 +51,7 @@ namespace DashboardApi.Mail
             _logger = logger;
             _contextdb2 = db2c;
             _configuration = configuration;
-            connectionString = _configuration.GetConnectionString("DefaultConnection");
+            connectionString = _configuration.GetConnectionString("DashboardConnection");
             _dashboardContext = dashboardcontext;
             _contextdb1 = BDC;
         }

@@ -37,8 +37,8 @@ namespace DashboardApi.Controllers
             _db2Context = bD2Context;
             _dbRebelContext = dBRebelContext;
             _configuration = configuration;
-            connectionString = _configuration.GetConnectionString("DefaultConnection");
-            connectionStringDBREBEL = _configuration.GetConnectionString("DBREBELWINGS");
+            connectionString = _configuration.GetConnectionString("DashboardConnection");
+            connectionStringDBREBEL = _configuration.GetConnectionString("RebelWingsConnection");
             _dashboardContext = dashboardcontext;
             _funciones = fn;
             _fx = fx;

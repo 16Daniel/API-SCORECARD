@@ -1,4 +1,4 @@
-/Properties
 /bin
 /.vs
 /obj
+/appsettings.Development.json
