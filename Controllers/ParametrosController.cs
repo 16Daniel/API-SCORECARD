@@ -26,7 +26,7 @@ namespace DashboardApi.Controllers
             _db2Context = bD2Context;
             _dbRebelContext = dBRebelContext;
             _configuration = configuration;
-            connectionString = _configuration.GetConnectionString("DefaultConnection");
+            connectionString = _configuration.GetConnectionString("DashboardConnection");
             _dashboardContext = dashboardcontext;
         }
 

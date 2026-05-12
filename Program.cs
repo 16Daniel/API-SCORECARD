@@ -14,16 +14,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 
-var defaultconnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-var connectionString = builder.Configuration.GetConnectionString("DBREBELWINGS");
-var connectionStringBD1 = builder.Configuration.GetConnectionString("DB1");
-var connectionStringBD2 = builder.Configuration.GetConnectionString("DB2");
+var DashboardConnection = builder.Configuration.GetConnectionString("DashboardConnection");
+var RebelWingsConnection = builder.Configuration.GetConnectionString("RebelWingsConnection");
+var DB1Connection = builder.Configuration.GetConnectionString("DB1Connection");
+var DB2Connection = builder.Configuration.GetConnectionString("DB2Connection");
 
-builder.Services.AddDbContext<DBRebelContext>(options => options.UseSqlServer(connectionString))
-    .AddDbContext<BD1Context>(options => options.UseSqlServer(connectionStringBD1))
-    .AddDbContext<DashboardContext>(options => options.UseSqlServer(defaultconnectionString))
+builder.Services.AddDbContext<DBRebelContext>(options => options.UseSqlServer(RebelWingsConnection))
+    .AddDbContext<BD1Context>(options => options.UseSqlServer(DB1Connection))
+    .AddDbContext<DashboardContext>(options => options.UseSqlServer(DashboardConnection))
     .AddDbContext<BD2Context>(options =>
-    options.UseSqlServer(connectionStringBD2, sqlOptions =>
+    options.UseSqlServer(DB2Connection, sqlOptions =>
     {
         sqlOptions.CommandTimeout(3600); // timeout en segundos
     }));
