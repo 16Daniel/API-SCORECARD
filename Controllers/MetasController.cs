@@ -102,22 +102,64 @@ namespace DashboardApi.Controllers
                                 Porcentaje = (decimal?)double.Parse(item.porcentaje),
                                 Grupo = item.grupo,
                             });
+                            await _db2Context.SaveChangesAsync();
+                        }
+                        else 
+                        {
+                            _db2Context.SerieAns.Remove(reg);
+                            await _db2Context.SaveChangesAsync();
+                            var itemupdate = new ModelsBD2.SerieAn()
+                            {
+                                SerieAn1 = item.serie,
+                                Mes = mes,
+                                Año = anio,
+                                Dias = (decimal?)double.Parse(item.dias),
+                                PresupuestoVta = (decimal?)double.Parse(item.meta),
+                                PresupuestoRotacion = (decimal?)double.Parse(item.rotacion),
+                                Porcentaje = (decimal?)double.Parse(item.porcentaje),
+                                Grupo = item.grupo,
+                            };
+                            _db2Context.SerieAns.Add(itemupdate);
+                            await _db2Context.SaveChangesAsync();
                         }
                     }
 
                     if (item.grupo.Trim().Equals("GAD"))
                     {
-                        _db1Context.SerieAns.Add(new ModelsBD1.SerieAn()
+                        var reg = _db1Context.SerieAns.Where(x => x.SerieAn1.Equals(item.serie) && x.Año == anio && x.Mes == mes && x.Grupo == item.grupo).FirstOrDefault();
+                        if (reg == null)
                         {
-                            SerieAn1 = item.serie,
-                            Mes = mes,
-                            Año = anio,
-                            Dias = (decimal?)double.Parse(item.dias),
-                            PresupuestoVta = (decimal?)double.Parse(item.meta),
-                            PresupuestoRotacion = (decimal?)double.Parse(item.rotacion),
-                            Porcentaje = (decimal?)double.Parse(item.porcentaje),
-                            Grupo = item.grupo,
-                        });
+                            _db1Context.SerieAns.Add(new ModelsBD1.SerieAn()
+                            {
+                                SerieAn1 = item.serie,
+                                Mes = mes,
+                                Año = anio,
+                                Dias = (decimal?)double.Parse(item.dias),
+                                PresupuestoVta = (decimal?)double.Parse(item.meta),
+                                PresupuestoRotacion = (decimal?)double.Parse(item.rotacion),
+                                Porcentaje = (decimal?)double.Parse(item.porcentaje),
+                                Grupo = item.grupo,
+                            });
+                            await _db1Context.SaveChangesAsync();
+                        }
+                        else 
+                        {
+                            _db1Context.SerieAns.Remove(reg);
+                            await _db1Context.SaveChangesAsync();
+                            var itemupdate = new ModelsBD1.SerieAn()
+                            {
+                                SerieAn1 = item.serie,
+                                Mes = mes,
+                                Año = anio,
+                                Dias = (decimal?)double.Parse(item.dias),
+                                PresupuestoVta = (decimal?)double.Parse(item.meta),
+                                PresupuestoRotacion = (decimal?)double.Parse(item.rotacion),
+                                Porcentaje = (decimal?)double.Parse(item.porcentaje),
+                                Grupo = item.grupo,
+                            };
+                            _db1Context.SerieAns.Add(itemupdate);
+                            await _db1Context.SaveChangesAsync();
+                        }
                     }
 
                     if (item.grupo == "WA") 
@@ -132,12 +174,18 @@ namespace DashboardApi.Controllers
                                 Meta = double.Parse(item.metaSalon),
                                 Sucursal = item.serie
                             });
+                            await _dashboardContext.SaveChangesAsync();
+                        }
+                        else 
+                        {
+                            regMetaSalon.Meta = double.Parse(item.metaSalon);
+                            _dashboardContext.MetasSalons.Update(regMetaSalon);
+                            await _dashboardContext.SaveChangesAsync();
                         }
                     }
                 }
-                await _db2Context.SaveChangesAsync();
-                await _db1Context.SaveChangesAsync();
-                await _dashboardContext.SaveChangesAsync(); 
+              
+             
                 return Ok();
             }
             catch (Exception ex)
