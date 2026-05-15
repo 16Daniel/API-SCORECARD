@@ -12,6 +12,7 @@ using OfficeOpenXml;
 using System.Data;
 using System.Globalization;
 using DashboardApi.Mail;
+using DashboardApi.Models;
 
 namespace DashboardApi.Controllers
 {
@@ -2552,7 +2553,53 @@ namespace DashboardApi.Controllers
       }
     }
 
-    static List<(int semana, DateTime inicio, DateTime fin)> ObtenerSemanasYFechasEnRango(DateTime fechaInicial, DateTime fechaFinal)
+
+        [HttpPost]
+        [Route("ConsultaReporteVentas")]
+        public async Task<ActionResult> reporteVentas([FromBody] DataModelReporteVentasSolicitud model)
+        {
+            try
+            {
+                var data = new List<DataModelReporteVentasRespuesta>();
+                List<SucursalModel> arrsucursales = System.Text.Json.JsonSerializer.Deserialize<List<SucursalModel>>(model.sucursales);
+                foreach (var itemsuc in arrsucursales)
+                {
+                    double valmeta1 = -1;
+                    double valmeta2 = -1;
+                    double valmetasalon = -1; 
+                    var cajafront = _db2Context.RemCajasfronts.Where(x => x.Idfront == itemsuc.cod).FirstOrDefault();
+                    if (cajafront != null)
+                    {
+                        var meta = _db2Context.SerieAns.Where(x => x.SerieAn1 == cajafront.Codalmventas && x.Año == model.fechaini1.Year && x.Mes == model.fechaini1.AddDays(15).Month).FirstOrDefault();
+                        var meta2 = _db2Context.SerieAns.Where(x => x.SerieAn1 == cajafront.Codalmventas && x.Año == model.fechaini2.Year && x.Mes == model.fechaini2.AddDays(15).Month).FirstOrDefault();
+                        if (meta != null) { valmeta1 = (double)meta.PresupuestoVta; }
+                        if (meta2 != null) { valmeta2 = (double)meta2.PresupuestoVta; }
+                        var metasalon = _dashboardContext.MetasSalons.Where(x => x.Sucursal == cajafront.Codalmventas && x.Año == model.fechaini2.Year && x.Mes == model.fechaini2.AddDays(15).Month).FirstOrDefault();
+                        if (metasalon != null) { valmetasalon = metasalon.Meta; }
+                    }
+
+                    data.Add(new DataModelReporteVentasRespuesta()
+                    {
+                        meta1 = valmeta1,
+                        meta2 = valmeta2,
+                        idSucursal = itemsuc.cod,
+                        nombre = itemsuc.name,
+                        metasalon = valmetasalon,
+                        ventaFechas = await _fx.getDataVentasFecha(itemsuc.cod, model.fechaini1, model.fechafin1, model.fechaini2, model.fechafin2)
+                    });
+                }
+
+                return StatusCode(StatusCodes.Status200OK,data);
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = ex.ToString() });
+            }
+        }
+
+
+        static List<(int semana, DateTime inicio, DateTime fin)> ObtenerSemanasYFechasEnRango(DateTime fechaInicial, DateTime fechaFinal)
     {
       // Usar la cultura invariante para obtener el calendario
       CultureInfo cultura = CultureInfo.InvariantCulture;

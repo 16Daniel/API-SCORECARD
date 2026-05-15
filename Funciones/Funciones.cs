@@ -1,4 +1,5 @@
 using DashboardApi.Controllers;
+using DashboardApi.Models;
 using DashboardApi.ModelsBD1;
 using DashboardApi.ModelsBD2;
 using DashboardApi.ModelsDashboard;
@@ -9,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
 using System.Globalization;
+using System.Linq;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace DashboardApi.Funciones
@@ -175,6 +177,48 @@ namespace DashboardApi.Funciones
 
             return total;
 
+        }
+
+
+        public async Task<List<ventaFecha>> getDataVentasFecha(int ids,DateTime fechaini1, DateTime fechafin1, DateTime fechaini2, DateTime fechafin2) 
+        {
+            var data = new List<ventaFecha>();
+            List<int> clientesdelivery = new List<int>
+            {
+                179, 177, 67, 180, 181, 182, 183, 184, 178, 185, 186, 187, 188
+            };
+
+            while (fechaini1.Date <= fechafin1.Date) 
+            {
+                double sumaTotalNeto = (double)_db2Context.Albventacabs.Where(x => x.Fo == ids && x.Fecha.Value.Date == fechaini1.Date).Sum(x => x.Totalneto);
+                int año = fechaini1.Year;
+                data.Add(new ventaFecha 
+                {
+                    venta = sumaTotalNeto,
+                    fecha = fechaini1.Date,
+                    año = año,
+                    ventaSalon = -1,
+                    ventaDelivery = -1,
+                });
+                fechaini1 = fechaini1.AddDays(1); 
+            }
+            while(fechaini2.Date <= fechafin2.Date)
+            {
+                double sumaTotalNeto = (double)_db2Context.Albventacabs.Where(x => x.Fo == ids && x.Fecha.Value.Date == fechaini2.Date).Sum(x => x.Totalneto);
+                double totalsalon = (double)_db2Context.Albventacabs.Where(x => x.Fo == ids && x.Fecha.Value.Date == fechaini2.Date && x.Codcliente == 0).Sum(x => x.Totalneto);
+                double totaldelivery = (double)_db2Context.Albventacabs.Where(x => x.Fo == ids && x.Fecha.Value.Date == fechaini2.Date && clientesdelivery.Contains(x.Codcliente ?? 0)).Sum(x => x.Totalneto);
+                int año = fechaini2.Year;
+                data.Add(new ventaFecha
+                {
+                    venta = sumaTotalNeto,
+                    fecha = fechaini2.Date,
+                    año = año,
+                    ventaSalon = totalsalon,
+                    ventaDelivery = totaldelivery,
+                });
+                fechaini2 = fechaini2.AddDays(1);
+            }
+            return data; 
         }
 
 
