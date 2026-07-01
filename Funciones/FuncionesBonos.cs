@@ -146,6 +146,7 @@ namespace DashboardApi.Funciones
                     using (SqlCommand command = new SqlCommand("GET_COMPRAS_SUCURSAL_MES", connection))
                     {
                         command.CommandType = CommandType.StoredProcedure;
+                        command.CommandTimeout = 1000;
                         command.Parameters.AddWithValue("@MONTH", data.month);
                         command.Parameters.AddWithValue("@YEAR", data.year);
                         command.Parameters.AddWithValue("@IDS", codalmacen);
@@ -183,6 +184,7 @@ namespace DashboardApi.Funciones
                     {
                         //command.CommandTimeout = 10000;
                         command.CommandType = CommandType.StoredProcedure;
+                        command.CommandTimeout = 1000;
 
                         // Añadir los parámetros al comando
                         command.Parameters.Add(new SqlParameter("@AFI", fechaini));
@@ -229,6 +231,7 @@ namespace DashboardApi.Funciones
                     {
 
                         command.CommandType = CommandType.StoredProcedure;
+                        command.CommandTimeout = 1000;
 
                         // Añadir los parámetros al comando
                         command.Parameters.Add(new SqlParameter("@FECHAINI", fechaini));
@@ -288,6 +291,7 @@ namespace DashboardApi.Funciones
                     {
 
                         command.CommandType = CommandType.StoredProcedure;
+                        command.CommandTimeout = 1000;
 
                         // Añadir los parámetros al comando
                         command.Parameters.Add(new SqlParameter("@FECHAINI", fechaini));

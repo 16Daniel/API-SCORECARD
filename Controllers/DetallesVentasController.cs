@@ -242,6 +242,7 @@ namespace DashboardApi.Controllers
                     using (SqlCommand command = new SqlCommand("GET_MERMAS_SUCURSAL_MES", connection))
                     {
                         command.CommandType = CommandType.StoredProcedure;
+                        command.CommandTimeout = 1000;
                         command.Parameters.AddWithValue("@MONTH", month);
                         command.Parameters.AddWithValue("@YEAR", year);
                         command.Parameters.AddWithValue("@IDS", codalmacen);
@@ -263,6 +264,7 @@ namespace DashboardApi.Controllers
                     using (SqlCommand command = new SqlCommand("GET_CONSUMOINTERNO_SUCURSAL_MES", connection))
                     {
                         command.CommandType = CommandType.StoredProcedure;
+                        command.CommandTimeout = 1000;
                         command.Parameters.AddWithValue("@MONTH", month);
                         command.Parameters.AddWithValue("@YEAR", year);
                         command.Parameters.AddWithValue("@IDS", ids);
@@ -283,6 +285,7 @@ namespace DashboardApi.Controllers
                     using (SqlCommand command = new SqlCommand("GET_CANCELACIONES_SUCURSAL_MES", connection))
                     {
                         command.CommandType = CommandType.StoredProcedure;
+                        command.CommandTimeout = 1000;
                         command.Parameters.AddWithValue("@MONTH", month);
                         command.Parameters.AddWithValue("@YEAR", year);
                         command.Parameters.AddWithValue("@IDS", ids);
@@ -303,6 +306,7 @@ namespace DashboardApi.Controllers
                     using (SqlCommand command = new SqlCommand("GET_INVITACIONES_SUCURSAL_MES", connection))
                     {
                         command.CommandType = CommandType.StoredProcedure;
+                        command.CommandTimeout = 1000;
                         command.Parameters.AddWithValue("@MONTH", month);
                         command.Parameters.AddWithValue("@YEAR", year);
                         command.Parameters.AddWithValue("@IDS", ids);

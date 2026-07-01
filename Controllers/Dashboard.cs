@@ -425,7 +425,8 @@ namespace DashboardApi.Controllers
           using (SqlCommand command = new SqlCommand("GET_MERMAS_SUCURSAL_MES", connection))
           {
             command.CommandType = CommandType.StoredProcedure;
-            command.Parameters.AddWithValue("@MONTH", month);
+                        command.CommandTimeout = 1000;
+                        command.Parameters.AddWithValue("@MONTH", month);
             command.Parameters.AddWithValue("@YEAR", year);
             command.Parameters.AddWithValue("@IDS", codalmacen);
             using (SqlDataReader reader = command.ExecuteReader())
@@ -446,7 +447,8 @@ namespace DashboardApi.Controllers
           using (SqlCommand command = new SqlCommand("GET_CONSUMOINTERNO_SUCURSAL_MES", connection))
           {
             command.CommandType = CommandType.StoredProcedure;
-            command.Parameters.AddWithValue("@MONTH", month);
+                        command.CommandTimeout = 1000;
+                        command.Parameters.AddWithValue("@MONTH", month);
             command.Parameters.AddWithValue("@YEAR", year);
             command.Parameters.AddWithValue("@IDS", ids);
             using (SqlDataReader reader = command.ExecuteReader())
@@ -466,7 +468,8 @@ namespace DashboardApi.Controllers
           using (SqlCommand command = new SqlCommand("GET_CANCELACIONES_SUCURSAL_MES", connection))
           {
             command.CommandType = CommandType.StoredProcedure;
-            command.Parameters.AddWithValue("@MONTH", month);
+                        command.CommandTimeout = 1000;
+                        command.Parameters.AddWithValue("@MONTH", month);
             command.Parameters.AddWithValue("@YEAR", year);
             command.Parameters.AddWithValue("@IDS", ids);
             using (SqlDataReader reader = command.ExecuteReader())
@@ -486,7 +489,8 @@ namespace DashboardApi.Controllers
           using (SqlCommand command = new SqlCommand("GET_INVITACIONES_SUCURSAL_MES", connection))
           {
             command.CommandType = CommandType.StoredProcedure;
-            command.Parameters.AddWithValue("@MONTH", month);
+                        command.CommandTimeout = 1000;
+                        command.Parameters.AddWithValue("@MONTH", month);
             command.Parameters.AddWithValue("@YEAR", year);
             command.Parameters.AddWithValue("@IDS", ids);
             using (SqlDataReader reader = command.ExecuteReader())
@@ -613,7 +617,8 @@ namespace DashboardApi.Controllers
           using (SqlCommand command = new SqlCommand("GET_COMPRAS_SUCURSAL_MES", connection))
           {
             command.CommandType = CommandType.StoredProcedure;
-            command.Parameters.AddWithValue("@MONTH", month);
+                        command.CommandTimeout = 1000;
+                        command.Parameters.AddWithValue("@MONTH", month);
             command.Parameters.AddWithValue("@YEAR", year);
             command.Parameters.AddWithValue("@IDS", codalmacen);
             using (SqlDataReader reader = command.ExecuteReader())
@@ -676,7 +681,8 @@ namespace DashboardApi.Controllers
           using (SqlCommand command = new SqlCommand("GET_DETALLES_DESCUENTOS_SUCURSAL_MES", connection))
           {
             command.CommandType = CommandType.StoredProcedure;
-            command.Parameters.AddWithValue("@MONTH", month);
+                        command.CommandTimeout = 1000;
+                        command.Parameters.AddWithValue("@MONTH", month);
             command.Parameters.AddWithValue("@YEAR", year);
             command.Parameters.AddWithValue("@IDS", ids);
             using (SqlDataReader reader = command.ExecuteReader())
@@ -732,7 +738,8 @@ namespace DashboardApi.Controllers
           using (SqlCommand command = new SqlCommand("GET_DETALLES_MERMAS_SUCURSAL_MES", connection))
           {
             command.CommandType = CommandType.StoredProcedure;
-            command.Parameters.AddWithValue("@MONTH", month);
+                        command.CommandTimeout = 1000;
+                        command.Parameters.AddWithValue("@MONTH", month);
             command.Parameters.AddWithValue("@YEAR", year);
             command.Parameters.AddWithValue("@IDS", codalmacen);
             using (SqlDataReader reader = command.ExecuteReader())
@@ -780,7 +787,8 @@ namespace DashboardApi.Controllers
           using (SqlCommand command = new SqlCommand("GET_DETALLES_CANCELACIONES_SUCURSAL_MES", connection))
           {
             command.CommandType = CommandType.StoredProcedure;
-            command.Parameters.AddWithValue("@MONTH", month);
+                        command.CommandTimeout = 1000;
+                        command.Parameters.AddWithValue("@MONTH", month);
             command.Parameters.AddWithValue("@YEAR", year);
             command.Parameters.AddWithValue("@IDS", ids);
             using (SqlDataReader reader = command.ExecuteReader())
@@ -829,7 +837,8 @@ namespace DashboardApi.Controllers
           using (SqlCommand command = new SqlCommand("GET_DETALLES_INVITACIONES_SUCURSAL_MES", connection))
           {
             command.CommandType = CommandType.StoredProcedure;
-            command.Parameters.AddWithValue("@MONTH", month);
+                        command.CommandTimeout = 1000;
+                        command.Parameters.AddWithValue("@MONTH", month);
             command.Parameters.AddWithValue("@YEAR", year);
             command.Parameters.AddWithValue("@IDS", ids);
             using (SqlDataReader reader = command.ExecuteReader())
@@ -877,7 +886,8 @@ namespace DashboardApi.Controllers
           using (SqlCommand command = new SqlCommand("GET_DETALLES_CONSUMOINTERNO_SUCURSAL_MES", connection))
           {
             command.CommandType = CommandType.StoredProcedure;
-            command.Parameters.AddWithValue("@MONTH", month);
+                        command.CommandTimeout = 1000;
+                        command.Parameters.AddWithValue("@MONTH", month);
             command.Parameters.AddWithValue("@YEAR", year);
             command.Parameters.AddWithValue("@IDS", ids);
             using (SqlDataReader reader = command.ExecuteReader())
@@ -924,9 +934,10 @@ namespace DashboardApi.Controllers
             {
 
               command.CommandType = CommandType.StoredProcedure;
+                            command.CommandTimeout = 1000;
 
-              // Añadir los parámetros al comando
-              command.Parameters.Add(new SqlParameter("@FECHAINI", fechaini));
+                            // Añadir los parámetros al comando
+                            command.Parameters.Add(new SqlParameter("@FECHAINI", fechaini));
               command.Parameters.Add(new SqlParameter("@FECHAFIN", fechafin));
               command.Parameters.Add(new SqlParameter("@IDS", ids));
 
@@ -1279,9 +1290,10 @@ namespace DashboardApi.Controllers
             {
 
               command.CommandType = CommandType.StoredProcedure;
+                            command.CommandTimeout = 1000;
 
-              // Añadir los parámetros al comando
-              command.Parameters.Add(new SqlParameter("@AFI", fecha));
+                            // Añadir los parámetros al comando
+                            command.Parameters.Add(new SqlParameter("@AFI", fecha));
               command.Parameters.Add(new SqlParameter("@AFF", fecha2));
               command.Parameters.Add(new SqlParameter("@IDS", ids));
 
@@ -1698,9 +1710,10 @@ namespace DashboardApi.Controllers
                     using (SqlCommand command = new SqlCommand("GET_AYCSCV", connection))
                     {
                       command.CommandType = CommandType.StoredProcedure;
+                                        command.CommandTimeout = 1000;
 
-                      // Agregar parámetros
-                      command.Parameters.AddWithValue("@FECHAINI", fechaFinal.AddDays(-6));
+                                        // Agregar parámetros
+                                        command.Parameters.AddWithValue("@FECHAINI", fechaFinal.AddDays(-6));
                       command.Parameters.AddWithValue("@FECHAFIN", fechaFinal);
                       command.Parameters.AddWithValue("@IDS", ids);
                       command.Parameters.AddWithValue("@CODV", vendedor[0].CodVendedor);
@@ -2050,9 +2063,10 @@ namespace DashboardApi.Controllers
               {
 
                 command.CommandType = CommandType.StoredProcedure;
+                                command.CommandTimeout = 1000;
 
-                // Añadir los parámetros al comando
-                command.Parameters.Add(new SqlParameter("@FECHAINI", fechaInicial.ToString("yyyy-MM-dd")));
+                                // Añadir los parámetros al comando
+                                command.Parameters.Add(new SqlParameter("@FECHAINI", fechaInicial.ToString("yyyy-MM-dd")));
                 command.Parameters.Add(new SqlParameter("@FECHAFIN", fechaFinal.ToString("yyyy-MM-dd")));
                 command.Parameters.Add(new SqlParameter("@IDS", suc));
 
