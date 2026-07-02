@@ -110,6 +110,7 @@ namespace DashboardApi.Controllers
                     {
                         VentasModel alcancedeventas = await _fxBonos.AlcanceDeVentas(ids, mes);
                         costoModel costossucursales = await _fxBonos.getCosto(alcancedeventas);
+                        VentasModel alcancedeventasSalon = await _fxBonos.AlcanceDeVentasSalon(ids, mes);
                         PorcentajeBebidaModel porcentajeBeidas = await _fxBonos.getPBebidas(ids, primerDia, ultimoDia);
                         inicioAYCModel iniciohdb = await _fxBonos.getInicioAYCHDB(ids, primerDia, ultimoDia);
                         PdiferenciasModel diferenciasData = await _fxBonos.getPDiferencias(ids, primerDia, ultimoDia);
@@ -119,6 +120,7 @@ namespace DashboardApi.Controllers
                         ReporteBono obj = new ReporteBono()
                         {
                             alcanceDeVentas = alcancedeventas,
+                            alcanceDeVentasSalon = alcancedeventasSalon,
                             costosSucursales = costossucursales,
                             pBebidas = porcentajeBeidas,
                             inicioayc = iniciohdb,
