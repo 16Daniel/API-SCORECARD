@@ -447,7 +447,7 @@ namespace DashboardApi.Funciones
             using HttpClient client = new HttpClient();
             try
             {
-                string url = "https://opera.no-ip.net/back/api_rebel_wings/api/Dashboard/" + ids+"/Supervisor?timeOne="+fechaini.ToString("yyyy-MM-dd") + "&timeTwo="+fechafin.ToString("yyyy-MM-dd") + "&isDone=2&city=1";
+                string url = "https://operamx.no-ip.net/back/api_rebel_wings/api/Dashboard/" + ids+"/Supervisor?timeOne="+fechaini.ToString("yyyy-MM-dd") + "&timeTwo="+fechafin.ToString("yyyy-MM-dd") + "&isDone=2&city=1";
                 HttpResponseMessage response = await client.GetAsync(url);
                 response.EnsureSuccessStatusCode(); // Lanza una excepción si hay un error HTTP
 

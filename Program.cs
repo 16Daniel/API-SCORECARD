@@ -44,12 +44,12 @@ builder.Services.AddScoped<FuncionesBonos>();
 //Configurar Quartz
 builder.Services.AddQuartz(q =>
 {
-    var remisionesKey = new JobKey("reportebonosjob");
-    q.AddJob<Jobreportebonos>(opts => opts.WithIdentity(remisionesKey));
+    var jobKey = new JobKey("reportebonosjob");
+    q.AddJob<Jobreportebonos>(opts => opts.WithIdentity(jobKey));
     q.AddTrigger(opts => opts
-        .ForJob(remisionesKey)
+        .ForJob(jobKey)
         .WithIdentity("reportebonosjob-trigger")
-        .WithCronSchedule("0 0 3 1 * ?") 
+        .WithCronSchedule("0 0 3 * * ?") 
     );
 });
 
