@@ -1,4 +1,5 @@
 using DashboardApi.Funciones;
+using DashboardApi.Jobs;
 using DashboardApi.Mail;
 using DashboardApi.Middlewares;
 using DashboardApi.ModelsBD1;
@@ -39,6 +40,22 @@ builder.Services.AddCors(policyBuilder =>
 builder.Services.AddScoped<MailC>();
 builder.Services.AddScoped<Funciones>();
 builder.Services.AddScoped<FuncionesBonos>();
+
+//Configurar Quartz
+builder.Services.AddQuartz(q =>
+{
+    var remisionesKey = new JobKey("reportebonosjob");
+    q.AddJob<Jobreportebonos>(opts => opts.WithIdentity(remisionesKey));
+    q.AddTrigger(opts => opts
+        .ForJob(remisionesKey)
+        .WithIdentity("reportebonosjob-trigger")
+        .WithCronSchedule("0 0 3 1 * ?") 
+    );
+});
+
+// Quartz como hosted service
+builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
+
 
 builder.Services.AddEndpointsApiExplorer();
 
