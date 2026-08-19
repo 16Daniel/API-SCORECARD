@@ -67,7 +67,8 @@ namespace DashboardApi.Jobs
                             Mes = fecha.Date.Month,
                             Año = fecha.Date.Year,
                             Jdata = System.Text.Json.JsonSerializer.Serialize(obj),
-                            Ids = ids
+                            Ids = ids,
+                            Fecha = DateTime.Now,
                         });
 
                         await _dashboardContext.SaveChangesAsync();
@@ -99,7 +100,7 @@ namespace DashboardApi.Jobs
                         {
                             Console.WriteLine("");
                         }
-
+                        reporte.Fecha = DateTime.Now;
                         reporte.Jdata = System.Text.Json.JsonSerializer.Serialize(obj);
                         _dashboardContext.ReportesBonos.Update(reporte);    
 

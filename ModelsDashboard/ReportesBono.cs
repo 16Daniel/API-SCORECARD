@@ -10,5 +10,6 @@ namespace DashboardApi.ModelsDashboard
         public int Año { get; set; }
         public string Jdata { get; set; } = null!;
         public int? Ids { get; set; }
+        public DateTime? Fecha { get; set; }
     }
 }

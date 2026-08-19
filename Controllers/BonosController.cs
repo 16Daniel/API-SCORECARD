@@ -139,12 +139,46 @@ namespace DashboardApi.Controllers
                             Mes = fecha.Date.Month,
                             Año = fecha.Date.Year,
                             Jdata = System.Text.Json.JsonSerializer.Serialize(obj),
-                            Ids = ids
+                            Ids = ids,
+                            Fecha = DateTime.Now
                         });
 
                         await _dashboardContext.SaveChangesAsync();
                     }
-                 
+                    else
+                    {
+                        VentasModel alcancedeventas = await _fxBonos.AlcanceDeVentas(ids, mes);
+                        costoModel costossucursales = await _fxBonos.getCosto(alcancedeventas);
+                        VentasModel alcancedeventasSalon = await _fxBonos.AlcanceDeVentasSalon(ids, mes);
+                        PorcentajeBebidaModel porcentajeBeidas = await _fxBonos.getPBebidas(ids, primerDia, ultimoDia);
+                        inicioAYCModel iniciohdb = await _fxBonos.getInicioAYCHDB(ids, primerDia, ultimoDia);
+                        PdiferenciasModel diferenciasData = await _fxBonos.getPDiferencias(ids, primerDia, ultimoDia);
+                        PmermasModel mermasdata = await _fxBonos.getMermas(ids, primerDia, ultimoDia, diferenciasData);
+                        double porcentajeTareas = await _fxBonos.getPorcentajeTareas(ids, primerDia, ultimoDia);
+
+                        ReporteBono obj = new ReporteBono()
+                        {
+                            alcanceDeVentas = alcancedeventas,
+                            alcanceDeVentasSalon = alcancedeventasSalon,
+                            costosSucursales = costossucursales,
+                            pBebidas = porcentajeBeidas,
+                            inicioayc = iniciohdb,
+                            diferenciasData = diferenciasData,
+                            mermasdata = mermasdata,
+                            porcentajeTareas = porcentajeTareas,
+                        };
+
+                        if (alcancedeventas.ventaTotal == 0)
+                        {
+                            Console.WriteLine("");
+                        }
+                        reporte.Fecha = DateTime.Now;
+                        reporte.Jdata = System.Text.Json.JsonSerializer.Serialize(obj);
+                        _dashboardContext.ReportesBonos.Update(reporte);
+
+                        await _dashboardContext.SaveChangesAsync();
+                    }
+
                 }
 
                 return StatusCode(StatusCodes.Status200OK);

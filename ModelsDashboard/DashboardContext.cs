@@ -33,7 +33,7 @@ namespace DashboardApi.ModelsDashboard
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Data Source=192.168.31.52;Initial Catalog=DashboardDB;Integrated Security=False;User Id=App2;Password=eVPUh82pWdSP9fPD;MultipleActiveResultSets=True;Connection Timeout=120000");
+                optionsBuilder.UseSqlServer("Data Source=172.16.1.1;Initial Catalog=DashboardDB;Integrated Security=False;User Id=App2;Password=8Z2bpwvZ2pzpXV7Q;MultipleActiveResultSets=True;Connection Timeout=120000");
             }
         }
 
@@ -188,6 +188,10 @@ namespace DashboardApi.ModelsDashboard
                 entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.Año).HasColumnName("AÑO");
+
+                entity.Property(e => e.Fecha)
+                    .HasColumnType("datetime")
+                    .HasColumnName("FECHA");
 
                 entity.Property(e => e.Ids).HasColumnName("IDS");
 
