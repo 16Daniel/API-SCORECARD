@@ -43,6 +43,7 @@ namespace DashboardApi.Jobs
                         inicioAYCModel iniciohdb = await _fxBonos.getInicioAYCHDB(ids, primerDia, ultimoDia);
                         PdiferenciasModel diferenciasData = await _fxBonos.getPDiferencias(ids, primerDia, ultimoDia);
                         PmermasModel mermasdata = await _fxBonos.getMermas(ids, primerDia, ultimoDia, diferenciasData);
+                        HitsdeVentasModel hitsventas = await _fxBonos.getHitsData(ids, primerDia, ultimoDia, alcancedeventasSalon.ventaTotal);
                         double porcentajeTareas = await _fxBonos.getPorcentajeTareas(ids, primerDia, ultimoDia);
 
                         ReporteBono obj = new ReporteBono()
@@ -55,6 +56,7 @@ namespace DashboardApi.Jobs
                             diferenciasData = diferenciasData,
                             mermasdata = mermasdata,
                             porcentajeTareas = porcentajeTareas,
+                            hitsventa = hitsventas
                         };
 
                         if (alcancedeventas.ventaTotal == 0)
@@ -82,6 +84,7 @@ namespace DashboardApi.Jobs
                         inicioAYCModel iniciohdb = await _fxBonos.getInicioAYCHDB(ids, primerDia, ultimoDia);
                         PdiferenciasModel diferenciasData = await _fxBonos.getPDiferencias(ids, primerDia, ultimoDia);
                         PmermasModel mermasdata = await _fxBonos.getMermas(ids, primerDia, ultimoDia, diferenciasData);
+                        HitsdeVentasModel hitsventas = await _fxBonos.getHitsData(ids, primerDia, ultimoDia, alcancedeventasSalon.ventaTotal);
                         double porcentajeTareas = await _fxBonos.getPorcentajeTareas(ids, primerDia, ultimoDia);
 
                         ReporteBono obj = new ReporteBono()
@@ -94,6 +97,7 @@ namespace DashboardApi.Jobs
                             diferenciasData = diferenciasData,
                             mermasdata = mermasdata,
                             porcentajeTareas = porcentajeTareas,
+                            hitsventa = hitsventas
                         };
 
                         if (alcancedeventas.ventaTotal == 0)
