@@ -11,6 +11,7 @@ using System.Data;
 using System.Diagnostics.Metrics;
 using System.Text.Json;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using Dapper;
 
 namespace DashboardApi.Funciones
 {
@@ -39,10 +40,10 @@ namespace DashboardApi.Funciones
             _fx = fx;
         }
 
-        public async Task<VentasModel> AlcanceDeVentas(int itemsuc, string mes) 
+        public async Task<VentasModel> AlcanceDeVentas(int itemsuc, string mes)
         {
             VentasModel ventaSuc = new VentasModel();
-            try 
+            try
             {
                 var sucursal = _db2Context.RemFronts.Where(x => x.Idfront == itemsuc).FirstOrDefault();
                 string[] datos = mes.Split('/');
@@ -74,8 +75,9 @@ namespace DashboardApi.Funciones
                 ventaSuc.month = month;
                 ventaSuc.year = year;
 
-                return ventaSuc; 
-            }catch (Exception ex) 
+                return ventaSuc;
+            }
+            catch (Exception ex)
             {
                 return ventaSuc;
             }
@@ -162,7 +164,7 @@ namespace DashboardApi.Funciones
 
                 costosucursal.ids = data.ids;
                 costosucursal.compras = compras;
-                costosucursal.costo = data.ventaTotal >0 ? (compras / data.ventaTotal) * (double)100.00 : 0;
+                costosucursal.costo = data.ventaTotal > 0 ? (compras / data.ventaTotal) * (double)100.00 : 0;
                 return costosucursal;
             }
             catch (Exception ex)
@@ -171,10 +173,10 @@ namespace DashboardApi.Funciones
             }
         }
 
-        public async Task<PorcentajeBebidaModel> getPBebidas(int ids,DateTime fechaini, DateTime fechafin)
+        public async Task<PorcentajeBebidaModel> getPBebidas(int ids, DateTime fechaini, DateTime fechafin)
         {
-            int totalayc = await getTotalCobrosAYC(ids, fechaini, fechafin); 
-             PorcentajeBebidaModel data = new PorcentajeBebidaModel();
+            int totalayc = await getTotalCobrosAYC(ids, fechaini, fechafin);
+            PorcentajeBebidaModel data = new PorcentajeBebidaModel();
             try
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
@@ -203,13 +205,13 @@ namespace DashboardApi.Funciones
                         data.ventaAlimentosSalon = ventaAlimentosSalon;
                         data.ventaBebidasSalon = ventaBebidasSalon;
                         data.ventaPostres = ventaPostres;
-                        data.totalAYC = totalayc; 
-                        data.porcentaje = totalayc>0 ? ((ventaBebidasSalon+ventaPostres) /(totalayc*55)) :0;
+                        data.totalAYC = totalayc;
+                        data.porcentaje = totalayc > 0 ? ((ventaBebidasSalon + ventaPostres) / (totalayc * 55)) : 0;
 
                     }
                 }
-               
-                return data; 
+
+                return data;
             }
             catch (Exception ex)
             {
@@ -324,10 +326,10 @@ namespace DashboardApi.Funciones
                         }
                         int totalayc = dataAYC.ToList().Sum(x => x.UdsPagadas);
                         int iniciohdb = dataAYC.Where(x => x.Tipo == "HOT-DOG" || x.Tipo == "BURGER").ToList().Sum(x => x.UdsPagadas);
-                        double porcentaje = totalayc>0 ? ((double)iniciohdb / (double)totalayc) * (double)100 : 0;
+                        double porcentaje = totalayc > 0 ? ((double)iniciohdb / (double)totalayc) * (double)100 : 0;
                         data.totalayc = totalayc;
                         data.inicioHDB = iniciohdb;
-                        data.porcentaje = porcentaje; 
+                        data.porcentaje = porcentaje;
 
                     }
 
@@ -347,13 +349,13 @@ namespace DashboardApi.Funciones
             try
             {
                 // obtener diferencias 
-                var diferencias = await _fx.GetDiferencias(ids, fechaini.ToString("yyyy-MM-dd"), fechafin.ToString("yyyy-MM-dd")); 
-                var diferenciasAla = diferencias.Where(x=>x.codart == 158).ToList();
+                var diferencias = await _fx.GetDiferencias(ids, fechaini.ToString("yyyy-MM-dd"), fechafin.ToString("yyyy-MM-dd"));
+                var diferenciasAla = diferencias.Where(x => x.codart == 158).ToList();
                 var diferenciasBoneless = diferencias.Where(x => x.codart == 10183).ToList();
                 var diferenciasPapas = diferencias.Where(x => x.codart == 10193).ToList();
 
                 // compras del articulo en el periodo 
-                double comprasAla = getComprasArticulo(ids,158,fechaini,fechafin);
+                double comprasAla = getComprasArticulo(ids, 158, fechaini, fechafin);
                 double comprasBoneless = getComprasArticulo(ids, 10183, fechaini, fechafin);
                 double comprasPapa = getComprasArticulo(ids, 10193, fechaini, fechafin);
 
@@ -368,9 +370,9 @@ namespace DashboardApi.Funciones
                 data.comprasPapa = comprasPapa;
 
                 // obtener porcentajes
-                data.pdifAla = comprasAla>0 ? (data.diferenciasAla / comprasAla) * (double)100 :0;
-                data.pdifBoneless = comprasBoneless>0 ? (data.diferenciasBoneless / comprasBoneless) * (double)100 : 0;
-                data.pdifPapas = comprasPapa>0 ? (data.diferenciasPapa / comprasPapa) * (double)100 :0;
+                data.pdifAla = comprasAla > 0 ? (data.diferenciasAla / comprasAla) * (double)100 : 0;
+                data.pdifBoneless = comprasBoneless > 0 ? (data.diferenciasBoneless / comprasBoneless) * (double)100 : 0;
+                data.pdifPapas = comprasPapa > 0 ? (data.diferenciasPapa / comprasPapa) * (double)100 : 0;
 
                 return data;
             }
@@ -385,8 +387,8 @@ namespace DashboardApi.Funciones
             PmermasModel data = new PmermasModel();
             try
             {
-                var sucursal = _db2Context.RemFronts.Where(x => x.Idfront == ids).FirstOrDefault(); 
-          
+                var sucursal = _db2Context.RemFronts.Where(x => x.Idfront == ids).FirstOrDefault();
+
                 double mermasala = (double)_dbRebelContext.ItMermas.Where(x => x.Codarticulo == 158 && x.Fecha.Value.Date >= fechaini.Date && x.Fecha <= fechafin.Date && x.Justificacion == "MERMA OPERATIVA" && x.Sucursal == sucursal.Titulo).Sum(x => x.Unidades);
                 double mermasBoneless = (double)_dbRebelContext.ItMermas.Where(x => x.Codarticulo == 10183 && x.Fecha.Value.Date >= fechaini.Date && x.Fecha <= fechafin.Date && x.Justificacion == "MERMA OPERATIVA" && x.Sucursal == sucursal.Titulo).Sum(x => x.Unidades);
                 double mermaspapa = (double)_dbRebelContext.ItMermas.Where(x => x.Codarticulo == 10193 && x.Fecha.Value.Date >= fechaini.Date && x.Fecha <= fechafin.Date && x.Justificacion == "MERMA OPERATIVA" && x.Sucursal == sucursal.Titulo).Sum(x => x.Unidades);
@@ -395,9 +397,9 @@ namespace DashboardApi.Funciones
                 data.mermasBoneless = mermasBoneless;
                 data.mermasPapa = mermaspapa;
 
-                data.pmermasAla = datadif.comprasAla>0 ? (mermasala / datadif.comprasAla) * (double)100: 0; 
-                data.pmermasBoneless = datadif.comprasBoneless>0 ? (mermasBoneless / datadif.comprasBoneless) * (double)100 :0;
-                data.pmermasPapas = datadif.comprasPapa>0 ? (mermaspapa / datadif.comprasPapa) * (double)100 :0;
+                data.pmermasAla = datadif.comprasAla > 0 ? (mermasala / datadif.comprasAla) * (double)100 : 0;
+                data.pmermasBoneless = datadif.comprasBoneless > 0 ? (mermasBoneless / datadif.comprasBoneless) * (double)100 : 0;
+                data.pmermasPapas = datadif.comprasPapa > 0 ? (mermaspapa / datadif.comprasPapa) * (double)100 : 0;
 
                 return data;
             }
@@ -443,11 +445,11 @@ namespace DashboardApi.Funciones
 
         public async Task<double> getPorcentajeTareas(int ids, DateTime fechaini, DateTime fechafin)
         {
-            double porcentaje = 0; 
+            double porcentaje = 0;
             using HttpClient client = new HttpClient();
             try
             {
-                string url = "https://operamx.no-ip.net/back/api_rebel_wings/api/Dashboard/" + ids+"/Supervisor?timeOne="+fechaini.ToString("yyyy-MM-dd") + "&timeTwo="+fechafin.ToString("yyyy-MM-dd") + "&isDone=2&city=1";
+                string url = "https://operamx.no-ip.net/back/api_rebel_wings/api/Dashboard/" + ids + "/Supervisor?timeOne=" + fechaini.ToString("yyyy-MM-dd") + "&timeTwo=" + fechafin.ToString("yyyy-MM-dd") + "&isDone=2&city=1";
                 HttpResponseMessage response = await client.GetAsync(url);
                 response.EnsureSuccessStatusCode(); // Lanza una excepción si hay un error HTTP
 
@@ -480,7 +482,7 @@ namespace DashboardApi.Funciones
             }
         }
 
-        public double getComprasArticulo(int ids, int codart, DateTime fechaini, DateTime fechafin) 
+        public double getComprasArticulo(int ids, int codart, DateTime fechaini, DateTime fechafin)
         {
             double compras = 0;
 
@@ -538,31 +540,31 @@ namespace DashboardApi.Funciones
         }
 
         public System.Drawing.Color getBgColorDM(double porcentaje)
-          {
+        {
             System.Drawing.Color color = System.Drawing.Color.White;
 
-            if(porcentaje<2.5 && porcentaje>-2.5)
-              {
+            if (porcentaje < 2.5 && porcentaje > -2.5)
+            {
                 color = System.Drawing.Color.Green;
-              }
+            }
 
-            if(porcentaje>=2.5 || porcentaje<=-2.5)
-              {
+            if (porcentaje >= 2.5 || porcentaje <= -2.5)
+            {
                 color = System.Drawing.Color.Red;
-              }
-            return color; 
-          }
+            }
+            return color;
+        }
 
         public System.Drawing.Color getBgColorAlcance(double porcentaje)
         {
             System.Drawing.Color color = System.Drawing.Color.White;
 
-            if (porcentaje >=95)
+            if (porcentaje >= 95)
             {
                 color = System.Drawing.Color.Green;
             }
 
-            if (porcentaje >=75 && porcentaje < 95)
+            if (porcentaje >= 75 && porcentaje < 95)
             {
                 color = System.Drawing.Color.Yellow;
             }
@@ -618,17 +620,17 @@ namespace DashboardApi.Funciones
             return color;
         }
 
-        public Boolean esAmarillo(System.Drawing.Color color) 
+        public Boolean esAmarillo(System.Drawing.Color color)
         {
             Boolean status = false;
             if (color == System.Drawing.Color.Yellow)
             {
                 status = true;
-            }         
+            }
             return status;
         }
 
-        public async Task<List<int>> getSucursales() 
+        public async Task<List<int>> getSucursales()
         {
             List<int> sucursales = new List<int>();
             string query = @"
@@ -664,6 +666,75 @@ WHERE (ALM.NOTAS LIKE N'RW') AND (RCF.CAJAFRONT = 1)";
             return sucursales;
         }
 
+        public async Task<HitsdeVentasModel> getHitsData(int ids, DateTime fechaini, DateTime fechafin, double ventasSalon)
+        {
+            var data = new HitsdeVentasModel();
+
+            try
+            {
+                int numcomensales = (int)_db2Context.Albventacabs.Where(x => x.Fo == ids && x.Fecha.Value.Date >= fechaini.Date && x.Fecha.Value.Date <= fechafin.Date && x.Codcliente == 0).Sum(x => x.Numcomensales);
+                double ticketpromedio = ventasSalon / numcomensales;
+                int numtickets = _db2Context.Albventacabs.Where(x => x.Fo == ids && x.Fecha.Value.Date >= fechaini.Date && x.Fecha.Value.Date <= fechafin.Date && x.Codcliente == 0 && x.Totalneto != 0 && x.Facturado == "T").Count();
+                int numcervezas = 0, numdestilados = 0, numbsa = 0; 
+                double ventacervezas = 0, ventadestilados = 0, ventabsa = 0;
+
+                using var connection = new SqlConnection(connectionString);
+                var parametros = new
+                {
+                    FECHAINI = fechaini.Date,
+                    FECHAFIN = fechafin.Date,
+                    IDS = ids
+                };
+
+                var resultado = await connection.QueryAsync<ResumenBebidasDto>(
+                    sql: "dbo.SP_HITS_BEBIDAS",
+                    param: parametros,
+                    commandType: CommandType.StoredProcedure
+                );
+                var lista = resultado.ToList();
+                if (lista.Count > 0)
+                {
+                    numcervezas = lista[0].Cerveza;
+                    numdestilados = lista[0].Destilados;
+                    numbsa = lista[0].Bsa; 
+                    ventacervezas = lista[0].VentaCerveza;
+                    ventadestilados = lista[0].VentaDestilados;
+                    ventabsa = lista[0].VentaBsa; 
+                }
+
+                data.numcomensales = numcomensales; 
+                data.numtickets = numtickets;
+                data.tikcetsPromedio = ticketpromedio;
+                data.cervezas = numcervezas;
+                data.destilados = numdestilados;
+                data.bsa = numbsa; 
+                data.ventacervezas = ventacervezas;
+                data.ventadestilados = ventadestilados;
+                data.ventabsa = ventabsa;
+                data.porcentajeventacervezas = (ventacervezas / ventasSalon) * 100; 
+                data.porcentajeventadestilados = (ventadestilados / ventasSalon) * 100;
+                data.porcentajeventabsa = (ventabsa / ventasSalon) * 100;
+
+                return data;
+            }
+            catch (Exception ex)
+            {
+                return data;
+            }
+        }
+
+    }
+
+    public class ResumenBebidasDto
+    {
+        public short CodAlmacen { get; set; }
+        public string NombreAlmacen { get; set; } = string.Empty;
+        public int Cerveza { get; set; } = 0;
+        public double VentaCerveza { get; set; } = 0;
+        public int Destilados { get; set; } = 0;
+        public double VentaDestilados { get; set; } = 0;
+        public int Bsa { get; set; } = 0;
+        public double VentaBsa { get; set; } = 0;
     }
 
     public class costoModel
@@ -673,33 +744,50 @@ WHERE (ALM.NOTAS LIKE N'RW') AND (RCF.CAJAFRONT = 1)";
         public double costo { get; set; }
     }
 
+    public class HitsdeVentasModel
+    {
+        public int numcomensales { get; set; }
+        public int numtickets { get; set; }
+        public double tikcetsPromedio { get; set; }
+        public int cervezas { get; set; }
+        public int destilados { get; set; }
+        public int bsa { get; set; }
+        public double ventacervezas { get; set; }
+        public double ventadestilados { get; set; }
+        public double ventabsa { get; set; }
+        public double porcentajeventacervezas { get; set; }
+        public double porcentajeventadestilados { get; set; }
+        public double porcentajeventabsa { get; set; }
+
+    }
+
     public class PorcentajeBebidaModel
     {
         public double ventaAlimentosSalon { get; set; }
-        public double ventaBebidasSalon { get; set; }   
+        public double ventaBebidasSalon { get; set; }
         public double ventaPostres { get; set; }
-        public double porcentaje { get; set; }  
-        public int totalAYC { get; set; }   
+        public double porcentaje { get; set; }
+        public int totalAYC { get; set; }
     }
 
-    public class inicioAYCModel 
+    public class inicioAYCModel
     {
         public int totalayc { get; set; }
-        public int inicioHDB { get; set;}
+        public int inicioHDB { get; set; }
         public double porcentaje { get; set; }
     }
 
-    public class PdiferenciasModel 
+    public class PdiferenciasModel
     {
-        public double diferenciasAla {  get; set; }
+        public double diferenciasAla { get; set; }
         public double comprasAla { get; set; }
         public double diferenciasBoneless { get; set; }
-        public double comprasBoneless { get;set; }
+        public double comprasBoneless { get; set; }
         public double diferenciasPapa { get; set; }
-        public double comprasPapa { get;set; }
-        public double pdifAla { get; set; } 
+        public double comprasPapa { get; set; }
+        public double pdifAla { get; set; }
         public double pdifBoneless { get; set; }
-        public double pdifPapas { get; set; }   
+        public double pdifPapas { get; set; }
     }
 
     public class PmermasModel

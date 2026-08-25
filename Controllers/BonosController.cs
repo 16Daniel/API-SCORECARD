@@ -54,6 +54,7 @@ namespace DashboardApi.Controllers
                         inicioAYCModel iniciohdb = await _fxBonos.getInicioAYCHDB(ids, primerDia, ultimoDia);
                         PdiferenciasModel diferenciasData = await _fxBonos.getPDiferencias(ids, primerDia, ultimoDia);
                         PmermasModel mermasdata = await _fxBonos.getMermas(ids, primerDia, ultimoDia, diferenciasData);
+                        HitsdeVentasModel hitsventas = await _fxBonos.getHitsData(ids, primerDia, ultimoDia, alcancedeventasSalon.ventaTotal);
                         double porcentajeTareas = await _fxBonos.getPorcentajeTareas(ids, primerDia, ultimoDia);
 
                         data.Add(new ReporteBono()
@@ -66,6 +67,7 @@ namespace DashboardApi.Controllers
                             diferenciasData = diferenciasData,
                             mermasdata = mermasdata,
                             porcentajeTareas = porcentajeTareas,
+                            hitsventa = hitsventas
                         });
                     }
                     else 
@@ -115,7 +117,9 @@ namespace DashboardApi.Controllers
                         inicioAYCModel iniciohdb = await _fxBonos.getInicioAYCHDB(ids, primerDia, ultimoDia);
                         PdiferenciasModel diferenciasData = await _fxBonos.getPDiferencias(ids, primerDia, ultimoDia);
                         PmermasModel mermasdata = await _fxBonos.getMermas(ids, primerDia, ultimoDia, diferenciasData);
+                        HitsdeVentasModel hitsventas= await _fxBonos.getHitsData(ids, primerDia, ultimoDia, alcancedeventasSalon.ventaTotal); 
                         double porcentajeTareas = await _fxBonos.getPorcentajeTareas(ids, primerDia, ultimoDia);
+
 
                         ReporteBono obj = new ReporteBono()
                         {
@@ -127,6 +131,7 @@ namespace DashboardApi.Controllers
                             diferenciasData = diferenciasData,
                             mermasdata = mermasdata,
                             porcentajeTareas = porcentajeTareas,
+                            hitsventa = hitsventas
                         };
 
                         if (alcancedeventas.ventaTotal == 0) 
@@ -154,6 +159,7 @@ namespace DashboardApi.Controllers
                         inicioAYCModel iniciohdb = await _fxBonos.getInicioAYCHDB(ids, primerDia, ultimoDia);
                         PdiferenciasModel diferenciasData = await _fxBonos.getPDiferencias(ids, primerDia, ultimoDia);
                         PmermasModel mermasdata = await _fxBonos.getMermas(ids, primerDia, ultimoDia, diferenciasData);
+                        HitsdeVentasModel hitsventas = await _fxBonos.getHitsData(ids, primerDia, ultimoDia, alcancedeventasSalon.ventaTotal);
                         double porcentajeTareas = await _fxBonos.getPorcentajeTareas(ids, primerDia, ultimoDia);
 
                         ReporteBono obj = new ReporteBono()
@@ -166,6 +172,7 @@ namespace DashboardApi.Controllers
                             diferenciasData = diferenciasData,
                             mermasdata = mermasdata,
                             porcentajeTareas = porcentajeTareas,
+                            hitsventa = hitsventas
                         };
 
                         if (alcancedeventas.ventaTotal == 0)
@@ -331,6 +338,19 @@ namespace DashboardApi.Controllers
                         worksheet.Cells[row, 32].Style.Fill.BackgroundColor.SetColor(_fxBonos.getBgColorApps(item.PorcentajeTareas));
                         worksheet.Cells[row, 32].Style.Font.Color.SetColor(_fxBonos.esAmarillo(_fxBonos.getBgColorApps(item.PorcentajeTareas)) ? System.Drawing.Color.Black : System.Drawing.Color.White);
 
+                        worksheet.Cells[row, 33].Value = item.numcomensales;
+                        worksheet.Cells[row, 34].Value = item.numtickets;
+                        worksheet.Cells[row, 35].Value = item.tikcetPromedio;
+                        worksheet.Cells[row, 36].Value = item.cervezas;
+                        worksheet.Cells[row, 37].Value = item.destilados;
+                        worksheet.Cells[row, 38].Value = item.bsa;
+                        worksheet.Cells[row, 39].Value = item.ventacervezas;
+                        worksheet.Cells[row, 40].Value = item.ventadestilados;
+                        worksheet.Cells[row, 41].Value = item.ventabsa;
+                        worksheet.Cells[row, 42].Value = item.porcentajeventacervezas;
+                        worksheet.Cells[row, 43].Value = item.porcentajeventadestilados;
+                        worksheet.Cells[row, 44].Value = item.porcentajeventabsa;
+
                         row++;
                     }
 
@@ -365,6 +385,7 @@ namespace DashboardApi.Controllers
         public PdiferenciasModel diferenciasData { get; set; }
         public PmermasModel mermasdata {  get; set; }
         public double porcentajeTareas {  get; set; } 
+        public HitsdeVentasModel hitsventa {  get; set; }
     }
     public class MatrizBono
     {
@@ -401,5 +422,17 @@ namespace DashboardApi.Controllers
         public double MermasPapa { get; set; }
         public double PmermasPapa { get; set; }
         public double PorcentajeTareas { get; set; }
+        public int numcomensales { get; set; }
+        public int numtickets { get; set; }
+        public double tikcetPromedio { get; set; }
+        public int cervezas { get; set; }
+        public int destilados { get; set; }
+        public int bsa { get; set; }
+        public double ventacervezas { get; set; }
+        public double ventadestilados { get; set; }
+        public double ventabsa { get; set; }
+        public double porcentajeventacervezas { get; set; }
+        public double porcentajeventadestilados { get; set; }
+        public double porcentajeventabsa { get; set; }
     }
 }

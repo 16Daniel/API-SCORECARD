@@ -49,7 +49,7 @@ builder.Services.AddQuartz(q =>
     q.AddTrigger(opts => opts
         .ForJob(jobKey)
         .WithIdentity("reportebonosjob-trigger")
-        .WithCronSchedule("0 0 3 * * ?") 
+        .WithSchedule(CronScheduleBuilder.DailyAtHourAndMinute(3, 0))
     );
 });
 

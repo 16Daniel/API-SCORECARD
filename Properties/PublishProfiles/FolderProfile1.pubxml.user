@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121.
+-->
+<Project>
+  <PropertyGroup>
+    <History>True|2025-04-22T15:46:32.3792851Z;True|2025-04-15T15:58:47.9884031-06:00;True|2025-04-10T09:05:37.0255375-06:00;True|2025-03-27T14:05:47.3482996-06:00;True|2025-03-26T17:29:19.7270001-06:00;True|2025-03-14T09:37:22.9210415-06:00;True|2025-03-12T11:06:17.6098828-06:00;True|2025-02-19T10:59:43.2083660-06:00;True|2025-02-19T10:47:02.2763936-06:00;True|2025-02-19T09:47:46.2612692-06:00;True|2025-02-18T09:59:10.2990678-06:00;True|2025-02-07T14:41:43.9222147-06:00;True|2025-02-05T09:02:28.4748035-06:00;True|2025-01-27T12:41:10.2965058-06:00;False|2025-01-27T12:32:45.1667067-06:00;</History>
+    <LastFailureDetails />
+    <_PublishTargetUrl>D:\repositorios git\API-SCORECARD\bin\Release\net6.0\publish\</_PublishTargetUrl>
+  </PropertyGroup>
+</Project>
